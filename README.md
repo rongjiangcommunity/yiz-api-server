@@ -1,6 +1,10 @@
 # wechat-auth
 
-server for wechat login
+Server for wechat login
+
+![img](https://developers.weixin.qq.com/miniprogram/dev/image/api-login.jpg?t=18080318)
+
+refer to: https://developers.weixin.qq.com/miniprogram/dev/api/api-login.html
 
 ## docker
 
