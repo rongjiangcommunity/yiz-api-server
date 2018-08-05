@@ -1,6 +1,21 @@
-# miniapp-auth
+# wechat-auth
 
 server for wechat login
+
+## docker
+
+```sh
+docker network create c-net
+
+docker pull redis
+docker run --network c-net --name redis -d redis redis-server --appendonly yes
+
+# app info to redis
+docker exec -it redis redis-cli HMSET app:yiz appid ${appid} secret ${serect}
+
+docker build . -t jiewei/wechat-auth
+docker run -d --rm --network c-net -p:7001:7001 --name wechat-auth jiewei/wechat-auth
+```
 
 ## API
 

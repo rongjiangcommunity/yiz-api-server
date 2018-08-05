@@ -7,3 +7,7 @@ Changelog.md
 Makefile
 docker-compose.yml
 docs
+
+node_modules
+test
+logs

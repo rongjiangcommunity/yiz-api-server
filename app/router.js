@@ -10,5 +10,5 @@ module.exports = app => {
   router.post('/api/wechat/redeem', controller.wechat.redeem);
   router.post('/api/wechat/expire', controller.wechat.expire);
 
-  router.post('/api/wechat/approve', controller.wechat.approve);
+  // router.post('/api/wechat/approve', controller.wechat.approve);
 };

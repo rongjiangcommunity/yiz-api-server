@@ -2,18 +2,19 @@ FROM node:carbon
 
 ENV HOME="/home/admin"
 
-ARG APP=miniapp-auth
-
-ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
-ENV PATH=$PATH:/home/node/.npm-global/bin
+ENV NPM_CONFIG_PREFIX=/home/admin/.npm-global
+ENV PATH=$PATH:/home/admin/.npm-global/bin
 ENV NODE_ENV=production
 
-WORKDIR /home/admin/$APP
+WORKDIR "/home/admin/wechat-auth"
 
 EXPOSE 80
-EXPOSE 6666
+EXPOSE 7001
 
-COPY . /home/admin/$APP
+COPY . /home/admin/wechat-auth
 
-RUN chmod +x /home/admin/$APP/*.sh
-ENTRYPOINT ["/home/admin/start.sh"]
+# RUN chmod +x /home/admin/wechat-auth/*.sh
+RUN npm install --production
+
+CMD [ "npm", "run", "start" ]
+# ENTRYPOINT ["/home/admin/wechat-auth/start.sh"]
