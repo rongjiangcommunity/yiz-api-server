@@ -7,19 +7,19 @@ const secret = '93sa37i4pTFWA2l6gun/AA';
 
 class WechatService extends Service {
   async redeem(params) {
-    const miniAppConf = this.app.config.wechat.miniAppConf || {};
+    const appConf = this.app.config.wechat.appConf || {};
     const urlPrefix = this.app.config.wechat.jscode2session;
     let credentials = '';
 
     const { app, code } = params;
 
-    if (!miniAppConf[app]) {
+    if (!appConf[app]) {
       this.ctx.status = 404;
       return;
     }
 
-    const appConfig = miniAppConf[app];
-    const querys = `appid=${appConfig.appid}&secret=${appConfig.secret}&js_code=${code}&grant_type=authorization_cod`;
+    const config = appConf[app];
+    const querys = `appid=${config.appid}&secret=${config.secret}&js_code=${code}&grant_type=authorization_cod`;
 
     const result = await this.ctx.curl(`${urlPrefix}?${querys}`, { dataType: 'json' });
 

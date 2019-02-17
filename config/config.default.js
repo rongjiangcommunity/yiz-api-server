@@ -21,9 +21,9 @@ module.exports = appInfo => {
   };
   config.wechat = {
     jscode2session: 'https://api.weixin.qq.com/sns/jscode2session',
-    miniApps: [ 'yiz' ],
-    miniAppConf: {
-      // [miniapp_name]: {
+    apps: [ 'yiz' ],
+    appConf: {
+      // [app_name]: {
       //   appid: '',
       //   secret: '',
       // },

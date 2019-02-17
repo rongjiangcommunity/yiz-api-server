@@ -2,16 +2,16 @@
 
 module.exports = app => {
   app.beforeStart(async () => {
-    // fetch miniapps's appid & secret
-    app.config.wechat.miniAppConf = app.config.wechat.miniAppConf || {};
-    const miniApps = app.config.wechat.miniApps || [];
+    // fetch all appid & secret
+    app.config.wechat.appConf = app.config.wechat.appConf || {};
+    const apps = app.config.wechat.apps || [];
 
-    const result = await Promise.all(miniApps.map(mini => {
-      return app.redis.get('redis').hgetall(`miniapp:${mini}`);
+    const result = await Promise.all(apps.map(a => {
+      return app.redis.get('redis').hgetall(`app:${a}`);
     }));
-    miniApps.forEach((mini, i) => {
+    apps.forEach((a, i) => {
       if (result[i]) {
-        app.config.wechat.miniAppConf[mini] = result[i];
+        app.config.wechat.appConf[a] = result[i];
       }
     });
   });

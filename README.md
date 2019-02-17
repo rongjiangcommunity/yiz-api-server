@@ -1,25 +1,10 @@
 # wechat-auth
 
-Server for wechat login
+Auth server for wechat login
 
 ![img](https://developers.weixin.qq.com/miniprogram/dev/image/api-login.jpg?t=18080318)
 
 refer to: https://developers.weixin.qq.com/miniprogram/dev/api/api-login.html
-
-## docker
-
-```sh
-docker network create c-net
-
-docker pull redis
-docker run --network c-net --name redis -d redis redis-server --appendonly yes
-
-# app info to redis
-docker exec -it redis redis-cli HMSET app:yiz appid ${appid} secret ${serect}
-
-docker build . -t jiewei/wechat-auth
-docker run -d --rm --network c-net -p:7001:7001 --name wechat-auth jiewei/wechat-auth
-```
 
 ## API
 
@@ -39,24 +24,32 @@ see [egg docs][egg] for more detail.
 
 ### Development
 
-```bash
-$ npm i
-$ npm run dev
-$ open http://localhost:7001/
+```sh
+npm i
+npm run dev
+open http://localhost:7001/
 ```
 
 ### Deploy
 
-```bash
-$ npm start
-$ npm stop
+### start
+
+```sh
+docker network create wechat-net
+
+docker pull jiewei/wechat-auth
+docker pull redis
+
+docker run --network wechat-net --name wx-redis -d redis redis-server --appendonly yes
+
+# set app config in db
+docker exec -it redis redis-cli HMSET app:yiz appid ${appid} secret ${serect}
+
+docker run -d --rm --network wechat-net -p:6001:7001 --name wechat-auth jiewei/wechat-auth
 ```
 
-### npm scripts
+### build
 
-- Use `npm run lint` to check code style.
-- Use `npm test` to run unit test.
-- Use `npm run autod` to auto detect dependencies upgrade, see [autod](https://www.npmjs.com/package/autod) for more detail.
-
-
-[egg]: https://eggjs.org
+```sh
+docker build . -t jiewei/wechat-auth
+```
