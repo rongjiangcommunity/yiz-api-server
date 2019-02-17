@@ -13,12 +13,11 @@ refer to: https://developers.weixin.qq.com/miniprogram/dev/api/api-login.html
 
 ```sh
 curl -X POST -H 'Content-Type: application/json' --data '{"code":"023ey3Ts00Gc8d1NH7Vs0RlZSs0ey3Ty", "app":"yiz"}' 127.0.0.1:7001/api/wechat/redeem
+
 curl -X POST -H 'Content-Type: application/json' --data '{"credentials":"f166d608e398a066f1016131e296069d2d9992b3c82a0b6ae09ec56fdcac42be"}' 127.0.0.1:7001/api/wechat/expire
 ```
 
 ## QuickStart
-
-<!-- add docs here for user -->
 
 see [egg docs][egg] for more detail.
 
@@ -32,7 +31,7 @@ open http://localhost:7001/
 
 ### Deploy
 
-### start
+#### start server
 
 ```sh
 docker network create wechat-net
@@ -48,8 +47,10 @@ docker exec -it redis redis-cli HMSET app:yiz appid ${appid} secret ${serect}
 docker run -d --rm --network wechat-net -p:6001:7001 --name wechat-auth jiewei/wechat-auth
 ```
 
-### build
+#### build
 
 ```sh
 docker build . -t jiewei/wechat-auth
 ```
+
+[egg]: https://eggjs.org
