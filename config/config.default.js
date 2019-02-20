@@ -13,7 +13,7 @@ module.exports = appInfo => {
     clients: {
       redis: {
         port: 6379,
-        host: 'redis',
+        host: 'wx-redis',
         password: '',
         db: 0,
       },

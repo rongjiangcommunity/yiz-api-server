@@ -44,13 +44,30 @@ docker run --network wechat-net --name wx-redis -d redis redis-server --appendon
 # set app config in db
 docker exec -it redis redis-cli HMSET app:yiz appid ${appid} secret ${serect}
 
-docker run -d --rm --network wechat-net -p:6001:7001 --name wechat-auth jiewei/wechat-auth
+docker run -d --network wechat-net -p:6001:7001 --name wechat-auth jiewei/wechat-auth
 ```
 
 #### build
 
 ```sh
 docker build . -t jiewei/wechat-auth
+```
+
+## nginx on centsOS
+
+```sh
+sudo yum install epel-release
+sudo yum install nginx
+sudo systemctl start nginx
+
+sudo firewall-cmd --permanent --zone=public --add-service=http 
+sudo firewall-cmd --permanent --zone=public --add-service=https
+sudo firewall-cmd --reload
+
+
+sudo systemctl enable nginx
+sudo systemctl restart nginx
+
 ```
 
 [egg]: https://eggjs.org
