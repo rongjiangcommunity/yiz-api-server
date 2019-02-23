@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 module.exports = app => {
@@ -7,7 +8,7 @@ module.exports = app => {
     const apps = app.config.wechat.apps || [];
 
     const result = await Promise.all(apps.map(a => {
-      return app.redis.get('redis').hgetall(`app:${a}`);
+      return app.redis.get('redis').hgetall(`${a}:appsecret`);
     }));
     apps.forEach((a, i) => {
       if (result[i]) {

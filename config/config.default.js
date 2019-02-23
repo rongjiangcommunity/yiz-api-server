@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 module.exports = appInfo => {
@@ -21,7 +22,7 @@ module.exports = appInfo => {
   };
   config.wechat = {
     jscode2session: 'https://api.weixin.qq.com/sns/jscode2session',
-    apps: [ 'yiz' ],
+    apps: ['yiz'],
     appConf: {
       // [app_name]: {
       //   appid: '',
@@ -33,7 +34,7 @@ module.exports = appInfo => {
     csrf: {
       ignoreJSON: false,
       ignore: ctx => {
-        const { request: { url: pathname } } = ctx;
+        const {request: {url: pathname}} = ctx;
         const csrfIgnore = [
           '/api',
         ];

@@ -4,6 +4,7 @@
   "description": "server for wechat login",
   "private": true,
   "dependencies": {
+    "@types/ioredis": "^4.0.8",
     "egg": "^2.2.1",
     "egg-redis": "^2.0.0",
     "egg-scripts": "^2.6.0"
@@ -14,8 +15,10 @@
     "egg-bin": "^4.3.5",
     "egg-ci": "^1.8.0",
     "egg-mock": "^3.14.0",
-    "eslint": "^4.11.0",
+    "eslint": "^5.4.0",
     "eslint-config-egg": "^6.0.0",
+    "eslint-config-google": "^0.12.0",
+    "typescript": "^3.3.3333",
     "webstorm-disable-index": "^1.2.0"
   },
   "engines": {
