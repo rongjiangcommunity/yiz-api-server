@@ -12,9 +12,9 @@ refer to: https://developers.weixin.qq.com/miniprogram/dev/api/api-login.html
 * /api/wechat/expire
 
 ```sh
-curl -X POST -H 'Content-Type: application/json' --data '{"code":"023ey3Ts00Gc8d1NH7Vs0RlZSs0ey3Ty", "app":"yiz"}' 127.0.0.1:7001/api/wechat/redeem
+curl -X POST -H 'Content-Type: application/json' --data '{"code":"023ey3Ts00Gc8d1NH7Vs0RlZSs0ey3Ty", "appid":"yiz"}' 127.0.0.1:7001/api/wechat/redeem
 
-curl -X POST -H 'Content-Type: application/json' --data '{"credentials":"f166d608e398a066f1016131e296069d2d9992b3c82a0b6ae09ec56fdcac42be"}' 127.0.0.1:7001/api/wechat/expire
+curl -X POST -H 'Content-Type: application/json' --data '{"credentials":"yiz:f166d608e398a066f1016131e296069d2d9992b3c82a0b6ae09ec56fdcac42be"}' 127.0.0.1:7001/api/wechat/expire
 ```
 
 ## QuickStart
@@ -62,7 +62,7 @@ sudo yum install epel-release
 sudo yum install nginx
 sudo systemctl start nginx
 
-sudo firewall-cmd --permanent --zone=public --add-service=http 
+sudo firewall-cmd --permanent --zone=public --add-service=http
 sudo firewall-cmd --permanent --zone=public --add-service=https
 sudo firewall-cmd --reload
 
