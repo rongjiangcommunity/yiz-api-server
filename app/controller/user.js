@@ -9,9 +9,7 @@ const otherFileds = 'g2,g1,degree,university,residence,hobby,work';
 
 class UserController extends Controller {
   async info() {
-    const {id} = this.ctx.params;
-    const {appname} = this.ctx.query;
-    const info = await this.service.user.info({id, appname});
+    const info = await this.service.user.info();
     this.ctx.body = {
       data: info,
       success: true,

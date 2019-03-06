@@ -3,15 +3,11 @@
 const Service = require('egg').Service;
 
 class UserService extends Service {
-  /**
-   * @param {{ id: string; appname: string; }} params
-   */
-  async info(params) {
-    const [appname] = (params.id ||'').split(':');
+  async info() {
     // @ts-ignore
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
-    const user = this.ctx.user;
-    const userInfo = await redis.hgetall(`${appname}:user:${user.openid}`);
+    const {appid, openid} = this.ctx.user;
+    const userInfo = await redis.hgetall(`${appid}:user:${openid}`);
     return userInfo;
   }
   /**
