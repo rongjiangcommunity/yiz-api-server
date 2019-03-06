@@ -47,10 +47,11 @@ docker exec -it redis redis-cli HMSET app:yiz appid ${appid} secret ${serect}
 docker run -d --network wechat-net -p:6001:7001 --name wechat-auth jiewei/wechat-auth
 ```
 
-#### build
+#### build & push
 
 ```sh
 docker build . -t jiewei/wechat-auth
+docker push jiewei/wechat-auth
 ```
 
 ## nginx on centsOS
