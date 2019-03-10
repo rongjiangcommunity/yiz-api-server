@@ -6,12 +6,12 @@ ENV NPM_CONFIG_PREFIX=/home/admin/.npm-global
 ENV PATH=$PATH:/home/admin/.npm-global/bin
 ENV NODE_ENV=production
 
-WORKDIR /home/admin/wechat-auth
+WORKDIR /home/admin/app
 
 # EXPOSE 80
 # EXPOSE 7001
 
-COPY . /home/admin/wechat-auth
+COPY . /home/admin/app
 
 # RUN chmod +x /home/admin/wechat-auth/*.sh
 RUN npm install --production

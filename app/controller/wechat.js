@@ -12,7 +12,7 @@ class WechatController extends Controller {
       };
       return;
     }
-    this.ctx.body = await this.service.wechat.redeem(this.ctx.request.body);;
+    this.ctx.body = await this.service.wechat.redeem(this.ctx.request.body);
   }
   async expire() {
     const {credentials} = this.ctx.request.body;
