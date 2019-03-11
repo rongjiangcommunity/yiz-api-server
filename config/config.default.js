@@ -42,6 +42,7 @@ module.exports = appInfo => {
       },
     },
   };
+  config.authtoken = '';
   return config;
 };
 
