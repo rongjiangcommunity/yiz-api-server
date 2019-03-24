@@ -1,4 +1,4 @@
-# redis
+# 接口设计
 
 术语说明
 
@@ -24,8 +24,8 @@ yiz:credentials:032c9f8396312effd80295e8d7ee2f914728c32fb73360b1a707c6778dffd17a
 ### 权限设计
 
 * 系统管理员：admin
-* 年纪管理员：grade_admin
-* 班级管理员：class_admin
+* 年纪管理员：gadmin
+* 班级管理员：cadmin
 * 校友：xiaoyou
 * 普通用户：'' | unknown
 
@@ -35,12 +35,12 @@ yiz:credentials:032c9f8396312effd80295e8d7ee2f914728c32fb73360b1a707c6778dffd17a
 
 提交申请信息
 
-* body：姓名、period、g3、微信、手机、classmates(,)
+<!-- * body：姓名、period、g3、微信、手机、classmates(,)
 * db key: ${appid}:apply:${uid}
 * status枚举：ok, notok, pending
-* db: gmt_create,gmt_modified,name,period,g3,wechat,mobile, classmates, assign_to=null, approved_by=null,status
+* db: gmt_create,gmt_modified,name,period,g3,wechat,mobile, classmates, assign_to=null, approved_by=null,status -->
 
-##### 接口设计
+##### 参数
 
 入参
 
@@ -84,12 +84,11 @@ yiz:credentials:032c9f8396312effd80295e8d7ee2f914728c32fb73360b1a707c6778dffd17a
 
 待审批用户列表接口，权限：管理员和班级管理员
 
-数据类型：sorted set
-
+<!--
 redis key设计：
 
 * 系统管理员：`${appid}:apply_list:admin` zadd $uid $ts
-* 班级管理员：`${appid}:apply_list:${period}-${g3}` zadd $uid $ts
+* 班级管理员：`${appid}:apply_list:${period}-${g3}` zadd $uid $ts -->
 
 后续：
 
@@ -97,10 +96,10 @@ redis key设计：
 
 #### GET /api/user/reviewinfo/:sid/:uid
 
-待审批用户信息接口
+待审批用户信息接口，权限：管理员和班级管理员
 
-* 待审批用户 id、姓名、period、g3、微信、手机、classmates
+<!-- * 待审批用户 id、姓名、period、g3、微信、手机、classmates -->
 
 #### POST /api/user/review/:sid/:uid
 
-review a user is a valid xiaoyou or not
+校友审批，权限：管理员和班级管理员
