@@ -76,6 +76,10 @@ yiz:credentials:032c9f8396312effd80295e8d7ee2f914728c32fb73360b1a707c6778dffd17a
 | classmates  |  String | 同班同学，半角逗号连接 |
 | status  |  String | ok, notok, pending |
 
+```json
+{"success":true,"data":{"gmt_create":"1553367634692","name":"ljw","period":"88","g3":"10","wechat":"wx123","mobile":"123","classmates":"c1,c2,c3","status":"ok","assign_to":"","approved_by":"o-YIv5TyMkOjeXljbwY6CqScAdq4","comment":"优秀","gmt_modified":"1553437330576","approved_by_name":"88-10 ljw"}}
+```
+
 ### 管理员接口
 
 注意权限控制
@@ -83,6 +87,12 @@ yiz:credentials:032c9f8396312effd80295e8d7ee2f914728c32fb73360b1a707c6778dffd17a
 #### GET /api/user/reviewlist/:sid
 
 待审批用户列表接口，权限：管理员和班级管理员
+
+出参示例:
+
+```json
+{"success":true,"data":[{"gmt_create":"1553367634692","name":"ljw","period":"88","g3":"10","wechat":"wx123","mobile":"123","classmates":"c1,c2,c3","status":"ok","assign_to":"","approved_by":"o-YIv5TyMkOjeXljbwY6CqScAdq4","comment":"优秀","gmt_modified":"1553437330576","approved_by_name":"88-10 ljw","uid":"o-YIv5TyMkOjeXljbwY6CqScAdq4"}]}
+```
 
 <!--
 redis key设计：
@@ -94,9 +104,15 @@ redis key设计：
 
 * 支持分页
 
-#### GET /api/user/reviewinfo/:sid/:uid
+#### GET /api/user/review/:sid/:uid
 
 待审批用户信息接口，权限：管理员和班级管理员
+
+出参示例:
+
+```json
+{"success":true,"data":{"gmt_create":"1553367634692","name":"ljw","period":"88","g3":"10","wechat":"wx123","mobile":"123","classmates":"c1,c2,c3","status":"ok","assign_to":"","approved_by":"o-YIv5TyMkOjeXljbwY6CqScAdq4","comment":"优秀","gmt_modified":"1553437330576","approved_by_name":"88-10 ljw"}}
+```
 
 <!-- * 待审批用户 id、姓名、period、g3、微信、手机、classmates -->
 
