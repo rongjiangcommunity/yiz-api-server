@@ -6,15 +6,15 @@ class HomeController extends Controller {
   async index() {
     this.ctx.body = 'hi, wechat auth';
   }
-  async hgetallp() {
+  async phgetall() {
     const {pattern} = this.ctx.params;
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
-    this.ctx.body = await redis.hgetallp(0, pattern);
+    this.ctx.body = await redis.phgetall(0, pattern);
   }
-  async getp() {
+  async pget() {
     const {pattern} = this.ctx.params;
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
-    this.ctx.body = await redis.getp(0, pattern);
+    this.ctx.body = await redis.pget(0, pattern);
   }
 }
 

@@ -1,5 +1,10 @@
 # redis
 
+术语说明
+
+* sid: session id
+* uid: user id
+
 ## 应用及用户
 
 > yiz 一中简写
@@ -21,18 +26,18 @@ yiz:credentials:032c9f8396312effd80295e8d7ee2f914728c32fb73360b1a707c6778dffd17a
 * 系统管理员：admin
 * 年纪管理员：grade_admin
 * 班级管理员：class_admin
-* 校友：alumni
+* 校友：xiaoyou
 * 普通用户：'' | unknown
 
 ### 用户接口
 
-#### POST /api/user/apply/:id
+#### POST /api/user/apply/:sid
 
 提交申请信息
 
 * body：姓名、period、g3、微信、手机、classmates(,)
 * db key: ${appid}:apply:${uid}
-* status枚举：ok, failed, pending
+* status枚举：ok, notok, pending
 * db: gmt_create,gmt_modified,name,period,g3,wechat,mobile, classmates, assign_to=null, approved_by=null,status
 
 ##### 接口设计
@@ -55,13 +60,9 @@ yiz:credentials:032c9f8396312effd80295e8d7ee2f914728c32fb73360b1a707c6778dffd17a
 |  success |  Boolean |   |
 |  data |  JSON |   |
 
-#### GET /api/user/apply/:id
+#### GET /api/user/apply/:sid
 
 查询申请进度
-
-入参
-
-无
 
 出参
 
@@ -73,28 +74,33 @@ yiz:credentials:032c9f8396312effd80295e8d7ee2f914728c32fb73360b1a707c6778dffd17a
 |  wechat | String  | 微信  |
 | mobile  |  String | 手机  |
 | classmates  |  String | 同班同学，半角逗号连接 |
-| status  |  String | ok, failed, pending |
+| status  |  String | ok, notok, pending |
 
 ### 管理员接口
 
 注意权限控制
 
-#### review list
+#### GET /api/user/reviewlist/:sid
 
-* 数据类型：sorted set
-* 系统管理员：`${appid}:sorted:review:admin` zadd $uid $ts
-* 班级管理员：`${appid}:sorted:review:${period}-${g3}` zadd $uid $ts
+待审批用户列表接口，权限：管理员和班级管理员
 
-Attention
+数据类型：sorted set
 
-* 分页
+redis key设计：
 
-#### review detail
+* 系统管理员：`${appid}:apply_list:admin` zadd $uid $ts
+* 班级管理员：`${appid}:apply_list:${period}-${g3}` zadd $uid $ts
 
-* candidate_id、姓名、period、g3、微信、手机、classmates
+后续：
 
-Attention
+* 支持分页
 
-#### review
+#### GET /api/user/reviewinfo/:sid/:uid
 
-* candidate_id,reviewer_id
+待审批用户信息接口
+
+* 待审批用户 id、姓名、period、g3、微信、手机、classmates
+
+#### POST /api/user/review/:sid/:uid
+
+review a user is a valid xiaoyou or not

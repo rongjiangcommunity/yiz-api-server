@@ -1,19 +1,33 @@
 'use strict';
 
+const {CADMIN} = require('./extend/helper');
+
 /**
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  const checkLogin = app.middleware.checkLogin();
-  const authtoken = app.middleware.authtoken();
-  const {router, controller} = app;
-  router.get('/', controller.home.index);
+  const isWxLogin = app.middleware.isWxLogin();
+  const authtoken = app.middleware.authToken();
+  const checkRole = app.middleware.checkRole;
+  const prereview = app.middleware.prereview();
 
-  router.post('/api/wechat/redeem', controller.wechat.redeem);
-  router.post('/api/wechat/expire', controller.wechat.expire);
-  router.get('/api/user/:id', checkLogin, controller.user.info);
-  router.post('/api/user/:id', checkLogin, controller.user.save);
+  const {router, controller: c} = app;
+  router.get('/', c.home.index);
 
-  router.get('/api/query/hgetall/:pattern', authtoken, controller.home.hgetallp);
-  router.get('/api/query/get/:pattern', authtoken, controller.home.getp);
+  router.post('/api/wechat/redeem', c.wechat.redeem);
+  router.post('/api/wechat/expire', c.wechat.expire);
+  router.get('/api/user/:sid', isWxLogin, c.user.info);
+  router.post('/api/user/:sid', isWxLogin, c.user.save);
+
+  router.post('/api/user/apply/:sid', isWxLogin, c.register.applyFor);
+  router.get('/api/user/apply/:sid', isWxLogin, c.register.applyInfo);
+
+  router.get('/api/user/reviewlist/:sid', isWxLogin, checkRole(CADMIN), c.register.reviewList);
+
+  const reviweMiddlewares = [isWxLogin, checkRole(CADMIN), prereview];
+  router.get('/api/user/review/:sid/:uid', ...reviweMiddlewares, c.register.reviewInfo);
+  router.post('/api/user/review/:sid/:uid', isWxLogin, checkRole(CADMIN), c.register.review);
+
+  router.get('/api/query/hgetall/:pattern', authtoken, c.home.phgetall);
+  router.get('/api/query/get/:pattern', authtoken, c.home.pget);
 };

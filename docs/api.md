@@ -1,6 +1,6 @@
 # API
 
-## /api/user/:id
+## /api/user/:sid
 
 ```sh
 # POST

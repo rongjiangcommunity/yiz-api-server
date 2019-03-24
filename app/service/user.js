@@ -3,18 +3,21 @@
 const Service = require('egg').Service;
 
 class UserService extends Service {
-  async info() {
+  /**
+   * @param {string} appid
+   * @param {string} openid
+   */
+  async info(appid, openid) {
     // @ts-ignore
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
-    const {appid, openid} = this.ctx.user;
-    const userInfo = await redis.hgetall(`${appid}:user:${openid}`);
-    return userInfo;
+    return await redis.hgetall(`${appid}:user:${openid}`);
   }
   /**
    * @param {[string, any][]} data
+   * @param {string} appid
+   * @param {string} openid
    */
-  async save(data) {
-    const {appid, openid} = this.ctx.user;
+  async save(appid, openid, data) {
     // @ts-ignore
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
     const key = `${appid}:user:${openid}`;
@@ -29,9 +32,7 @@ class UserService extends Service {
     extra.push(['gmt_modified', now]);
 
     await redis.hmset(key, new Map(data.concat(extra)));
-    const result = await redis.hgetall(key);
-
-    return result;
+    return await redis.hgetall(key);
   }
 }
 module.exports = UserService;

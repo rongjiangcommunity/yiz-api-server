@@ -19,7 +19,7 @@ module.exports = app => {
     app.config.authtoken = await redis.get('app:authtoken');
 
     // do not use in production
-    redis.defineCommand('hgetallp', {
+    redis.defineCommand('phgetall', {
       lua: `
       local collate = function (key)
         local raw_data = redis.call('HGETALL', key)
@@ -41,7 +41,7 @@ module.exports = app => {
     });
 
     // do not use in production
-    redis.defineCommand('getp', {
+    redis.defineCommand('pget', {
       lua: `
         local data = {}
         for _,k in ipairs(redis.call('keys', ARGV[1])) do

@@ -1,18 +1,15 @@
 'use strict';
 
 module.exports = () => {
+  // @ts-ignore
   return async (ctx, next) => {
+    ctx.logger.info('middleware', 'is-wx-login');
     // @ts-ignore
     const redis = /** @type {MyTypes.Redis} */(ctx.app.redis.get('redis'));
-    const {id} = ctx.params;
-    const [appid, sessionId] = (id ||'').split(':');
-
-    const user = await redis.hgetall(`${appid}:credentials:${sessionId}`);
-
-    ctx.user = {...user, appid};
-    ctx.logger.info('user', ctx.user);
-
-    if (!user || !user.openid) {
+    const {sid} = ctx.params;
+    const [appid, sessionId] = (sid ||'').split(':');
+    const wxinfo = await redis.hgetall(`${appid}:credentials:${sessionId}`);
+    if (!wxinfo || !wxinfo.openid) {
       ctx.status = 403;
       ctx.body = {
         success: false,
@@ -21,6 +18,7 @@ module.exports = () => {
       };
       return;
     }
+    ctx.wxuser = {...wxinfo, appid};
     await next();
   };
 };

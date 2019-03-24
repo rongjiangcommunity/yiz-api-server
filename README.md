@@ -43,7 +43,7 @@ docker run --network wechat-net -p:6379:6379 --name wx-redis -d redis redis-serv
 
 # set app config in db
 docker exec -it wx-redis redis-cli HMSET app:yiz appid ${appid} secret ${serect}
-docker exec -it wx-redis redis-cli set app:authtoken 5GBb840m2uS2i/xlpHD4coXbAjvE2U4mXKhMDaHra14=
+docker exec -it wx-redis redis-cli set app:authtoken $token
 
 docker run --rm -d --network wechat-net -p:6001:7001 --name wechat-auth jiewei/wechat-auth
 ```
@@ -68,17 +68,15 @@ sudo firewall-cmd --permanent --zone=public --add-service=http
 sudo firewall-cmd --permanent --zone=public --add-service=https
 sudo firewall-cmd --reload
 
-
 sudo systemctl enable nginx
 sudo systemctl restart nginx
-
 ```
 
 ## debug lua in redis
 
 ```sh
-redis-cli -p 6380  --eval hgetallp.lua 0 , yiz:user:*
-redis-cli -p 6380  --eval getp.lua 0 , app:*
+redis-cli -p 6380  --eval phgetall.lua 0 , yiz:user:*
+redis-cli -p 6380  --eval pget.lua 0 , app:*
 
 ```
 
