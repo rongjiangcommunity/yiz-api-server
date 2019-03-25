@@ -2,8 +2,6 @@
 
 const Service = require('egg').Service;
 
-const statusEnum = ['ok', 'notok', 'pending'];
-
 class RegisterService extends Service {
   /**
    * @param {string} appid
@@ -11,6 +9,7 @@ class RegisterService extends Service {
    * @param {{name: string; period: number; g3: number; wechat: string; mobile: string; classmates: string;}} info
    */
   async applyFor(appid, openid, info) {
+    const {PENDING} = this.ctx.helper;
     // @ts-ignore
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
     const {name, period, g3, wechat, mobile, classmates} = info;
@@ -31,22 +30,21 @@ class RegisterService extends Service {
     data.push(['mobile', mobile]);
     data.push(['classmates', classmates]);
 
-    data.push(['status', statusEnum[2]]);
+    data.push(['status', PENDING]);
     data.push(['assign_to', '']);
     data.push(['approved_by', '']);
     data.push(['approved_by_name', '']); // 88-10-ljw
     data.push(['comment', '']); // 审批人意见
     data.push(['gmt_modified', now]);
 
-    await redis.hmset(key, new Map(data));
-
     const applySetKey = `${appid}:apply_list:${period}-${g3}`;
     const allApplySetKey = `${appid}:apply_list:admin`;
+    // @TODO redis.multi
+    await redis.hmset(key, new Map(data));
     // @ts-ignore
     await redis.zadd(applySetKey, now, openid);
     // @ts-ignore
     await redis.zadd(allApplySetKey, now, openid);
-
     const result = await redis.hgetall(key);
     return result;
   }
@@ -103,6 +101,7 @@ class RegisterService extends Service {
    * @param {{ comment: string; approved: boolean; uid: string; }} params
    */
   async review(appid, openid, params) {
+    const {OK, NOT_OK} = this.ctx.helper;
     // @ts-ignore
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
     const now = Date.now();
@@ -116,7 +115,7 @@ class RegisterService extends Service {
 
     const uidKey = `${appid}:user:${uid}`;
     const applyKey = `${appid}:apply:${uid}`;
-    const status = approved ? statusEnum[0] : statusEnum[1];
+    const status = approved ? OK : NOT_OK;
     data.push(['status', status]);
     data.push(['comment', comment]); // 审批人意见
     data.push(['gmt_modified', now]);
@@ -124,6 +123,7 @@ class RegisterService extends Service {
     data.push(['approved_by', openid]); // 88-10-ljw
     data.push(['approved_by_name', reviewerName]);
 
+    // @TODO redis.multi
     await redis.hmset(applyKey, new Map(data));
     await redis.hset(uidKey, 'approved', approved);
 
