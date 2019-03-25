@@ -17,6 +17,14 @@ class RegisterController extends Controller {
       };
       return;
     }
+    const userinfo = await this.service.user.info(appid, openid);
+    if (userinfo.approved === 'true') {
+      this.ctx.body = {
+        success: false,
+        msg: 'You are already a xiaoyou.',
+      };
+      return;
+    }
     await this.service.register.applyFor(appid, openid, {
       name, period, g3, wechat, mobile, classmates,
     });
@@ -34,7 +42,7 @@ class RegisterController extends Controller {
     const {appid, openid} = this.ctx.wxuser;
     const data = await this.service.register.applyInfo({appid, openid});
     this.ctx.body = {
-      success: true,
+      success: !!(data && data.g3 && data.period),
       data,
     };
   }
