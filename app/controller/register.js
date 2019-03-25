@@ -72,7 +72,7 @@ class RegisterController extends Controller {
   }
   /**
    * POST /api/user/review/:sid/:uid
-   * curl -X POST 127.0.0.1:7001/api/user/review/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d/o-YIv5TyMkOjeXljbwY6CqScAdq4
+   * curl -X POST 127.0.0.1:7001/api/user/review/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d/o-YIv5TyMkOjeXljbwY6CqScAdq4 -H 'Content-Type: application/json' -d '{"comment":"优秀", "approved":true, "uid": "o-YIv5TyMkOjeXljbwY6CqScAdq4"}'
    */
   async review() {
     const {appid, openid} = this.ctx.wxuser;
