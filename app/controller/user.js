@@ -5,6 +5,7 @@ const Controller = require('egg').Controller;
 // period 届
 const requiredFileds = 'name,gender,mobile,period,g3,country,province,city,email,wechat';
 const otherFileds = 'g2,g1,degree,university,residence,hobby,work';
+const limitFileds = ['period', 'g3', 'name'];
 
 class UserController extends Controller {
   /**
@@ -26,7 +27,17 @@ class UserController extends Controller {
   async save() {
     const {appid, openid} = this.ctx.wxuser;
     const params = this.ctx.request.body;
+
+    const info = await this.service.user.info(appid, openid);
+    let approved = false;
+    if (info && info.approved === 'true') {
+      approved = true;
+    }
     const data = Object.entries(params).filter(([k, v]) => {
+      // 已认证校友限制修改
+      if (approved && limitFileds.indexOf(k) >= 0) {
+        return false;
+      }
       return (requiredFileds.indexOf(k)>=0 && v) || otherFileds.indexOf(k) >=0;
     });
     this.logger.info('data', data);
