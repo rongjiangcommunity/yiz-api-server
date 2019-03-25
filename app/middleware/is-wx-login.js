@@ -3,7 +3,6 @@
 module.exports = () => {
   // @ts-ignore
   return async (ctx, next) => {
-    ctx.logger.info('middleware', 'is-wx-login');
     // @ts-ignore
     const redis = /** @type {MyTypes.Redis} */(ctx.app.redis.get('redis'));
     const {sid} = ctx.params;

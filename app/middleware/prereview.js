@@ -3,7 +3,6 @@
 module.exports = () => {
   // @ts-ignore
   return async (ctx, next) => {
-    ctx.logger.info('middleware', 'prereview');
     const {CADMIN} = ctx.helper;
     const {appid} = ctx.wxuser;
     const {uid} = ctx.params;

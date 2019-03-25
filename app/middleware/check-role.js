@@ -6,7 +6,6 @@
 module.exports = (role) => {
   // @ts-ignore
   return async (ctx, next) => {
-    ctx.logger.info('middleware', 'check-role');
     // @ts-ignore
     const redis = /** @type {MyTypes.Redis} */(ctx.app.redis.get('redis'));
     const roles = ctx.helper.roles;
