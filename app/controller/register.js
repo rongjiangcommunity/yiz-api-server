@@ -5,11 +5,11 @@ const Controller = require('egg').Controller;
 class RegisterController extends Controller {
   /**
    * POST /api/user/apply/:sid
-   * curl -X POST 127.0.0.1:7001/api/user/apply/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d  -H 'Content-Type: application/json' -d '{"name":"ljw", "period":88, "g3": 10, "wechat": "wx123", "mobile": "123", "classmates":"c1,c2,c3"}'
+   * curl -X POST 127.0.0.1:7001/api/user/apply/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d  -H 'Content-Type: application/json' -d '{"name":"ljw", "period":88, "g3": 10, "wechat": "wx123", "mobile": "123", "classmates":"c1,c2,c3", "message": "hello"}'
    */
   async applyFor() {
     const {appid, openid} = this.ctx.wxuser;
-    const {name, period, g3, wechat, mobile, classmates} = this.ctx.request.body;
+    const {name, period, g3, wechat, mobile, classmates, message} = this.ctx.request.body;
     if ( !isPositive(period) || !isPositive(g3)) {
       this.ctx.body = {
         success: false,
@@ -26,7 +26,7 @@ class RegisterController extends Controller {
       return;
     }
     await this.service.register.applyFor(appid, openid, {
-      name, period, g3, wechat, mobile, classmates,
+      name, period, g3, wechat, mobile, classmates, message,
     });
 
     this.ctx.body = {
