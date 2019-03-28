@@ -25,13 +25,12 @@ class RegisterController extends Controller {
       };
       return;
     }
-    await this.service.register.applyFor(appid, openid, {
+    const result = await this.service.register.applyFor(appid, openid, {
       name, period, g3, wechat, mobile, classmates, message,
     });
 
     this.ctx.body = {
-      success: true,
-      // data,
+      success: !!result,
     };
   }
   /**

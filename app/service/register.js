@@ -40,13 +40,19 @@ class RegisterService extends Service {
 
     const applySetKey = `${appid}:apply_list:${period}-${g3}`;
     const allApplySetKey = `${appid}:apply_list:admin`;
-    // @TODO redis.multi
-    await redis.hmset(key, new Map(data));
-    // @ts-ignore
-    await redis.zadd(applySetKey, now, openid);
-    // @ts-ignore
-    await redis.zadd(allApplySetKey, now, openid);
-    const result = await redis.hgetall(key);
+
+    const result = await redis.multi()
+      .hmset(key, new Map(data))
+      // @ts-ignore
+      .zadd(applySetKey, now, openid)
+      .zadd(allApplySetKey, now, openid)
+      .exec().then(() => {
+        return true;
+      // @ts-ignore
+      }).catch(e => {
+        this.logger.error(e);
+        return false;
+      });
     return result;
   }
   /**
