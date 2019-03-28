@@ -108,40 +108,52 @@ class RegisterService extends Service {
     const now = Date.now();
     // uid,openid
     const {comment, approved, uid} = params;
-    /** @type {[string, any][]} */
-    const data = [];
 
     const reviewer = await redis.hgetall(`${appid}:user:${openid}`);
-    const reviewerName = reviewer ? `${reviewer.period}-${reviewer.g3} ${reviewer.name}` : '';
+    const reviewerName = reviewer && reviewer.g3 && reviewer.period ?
+      `${reviewer.period}-${reviewer.g3} ${reviewer.name}` : '';
 
     const uidKey = `${appid}:user:${uid}`;
     const applyKey = `${appid}:apply:${uid}`;
     const status = approved ? OK : NOT_OK;
+    const {period, g3, name} = await redis.hgetall(applyKey);
+
+    /** @type {[string, any][]} */
+    const data = [];
     data.push(['status', status]);
     data.push(['comment', comment]); // 审批人意见
     data.push(['gmt_modified', now]);
-
     data.push(['approved_by', openid]); // 88-10-ljw
     data.push(['approved_by_name', reviewerName]);
 
-    // @TODO redis.multi
-    await redis.hmset(applyKey, new Map(data));
-    await redis.hset(uidKey, 'approved', approved);
-
-    const {period, g3} = await redis.hgetall(applyKey);
-
+    const reviewInfo = ['approved', approved];
+    // change name,g3,period
+    if (approved) {
+      if (g3 && period) {
+        reviewInfo.push('name', name);
+        reviewInfo.push('g3', g3);
+        reviewInfo.push('period', period);
+      }
+    }
     const applySetKey = `${appid}:apply_list:${period}-${g3}`;
     const allApplySetKey = `${appid}:apply_list:admin`;
     const reviewedKey = `${appid}:reviewed_list:${period}-${g3}`;
     const allReviewedKey = `${appid}:reviewed_list:admin`;
 
-    await redis.zrem(applySetKey, uid);
-    await redis.zrem(allApplySetKey, uid);
-    // @ts-ignore
-    await redis.zadd(reviewedKey, now, uid);
-    // @ts-ignore
-    await redis.zadd(allReviewedKey, now, uid);
-    return true;
+    const result = await redis.multi().hmset(applyKey, new Map(data))
+      .hmset(uidKey, ...reviewInfo)
+      .zrem(applySetKey, uid)
+      .zrem(allApplySetKey, uid)
+      // @ts-ignore
+      .zadd(reviewedKey, now, uid)
+      .zadd(allReviewedKey, now, uid)
+      // @ts-ignore
+      .exec().catch(e => {
+        this.ctx.logger.error(e);
+        return false;
+      });
+    this.ctx.logger.info('multi result', result);
+    return !!result;
   }
 }
 
