@@ -40,11 +40,24 @@ class UserController extends Controller {
       }
       return (requiredFileds.indexOf(k)>=0 && v) || otherFileds.indexOf(k) >=0;
     });
-    this.logger.info('data', data);
+    // this.logger.info('data', data);
     const result = await this.service.user.save(appid, openid, data);
     this.ctx.body = {
       data: result,
       success: true,
+    };
+  }
+  /**
+   * POST /api/user/feedback/:sid
+   * curl -X POST 127.0.0.1:7001/api/user/feedback/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d  -H 'Content-Type: application/json' -d '{"message":"awesome app"}'
+   */
+  async feedback() {
+    const {appid, openid} = this.ctx.wxuser;
+    const {message} = this.ctx.request.body;
+    const result = await this.service.user.feedback(appid, openid, message);
+
+    this.ctx.body = {
+      success: result,
     };
   }
 }

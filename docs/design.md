@@ -19,7 +19,7 @@ yiz:appsecret
 yiz:credentials:032c9f8396312effd80295e8d7ee2f914728c32fb73360b1a707c6778dffd17a
 ```
 
-## 申请、审核
+## 申请、审核接口
 
 ### 权限设计
 
@@ -119,3 +119,13 @@ redis key设计：
 #### POST /api/user/review/:sid/:uid
 
 校友审批，权限：管理员和班级管理员
+
+## 用户反馈接口
+
+POST /api/user/feedback/:sid
+
+入参
+
+| field  |  type | 备注  |
+|---|---|---|
+|  message |  String | 留言  |

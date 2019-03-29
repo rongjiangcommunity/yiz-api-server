@@ -34,6 +34,24 @@ class UserService extends Service {
     await redis.hmset(key, new Map(data.concat(extra)));
     return await redis.hgetall(key);
   }
+  /**
+   * @param {string} appid
+   * @param {string} openid
+   * @param {string} message
+   */
+  async feedback(appid, openid, message) {
+    // @ts-ignore
+    const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
+    const now = Date.now();
+    const key = `${appid}:feedbacks`;
+    const data = {
+      gmt_create: now,
+      uid: openid,
+      message,
+    };
+    const result = await redis.lpush(key, JSON.stringify(data));
+    return result > 0;
+  }
 }
 module.exports = UserService;
 
