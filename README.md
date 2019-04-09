@@ -70,6 +70,8 @@ sudo firewall-cmd --reload
 
 sudo systemctl enable nginx
 sudo systemctl restart nginx
+
+vi /etc/nginx/nginx.conf
 ```
 
 ## debug lua in redis

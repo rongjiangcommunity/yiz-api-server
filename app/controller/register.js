@@ -51,9 +51,20 @@ class RegisterController extends Controller {
    * curl 127.0.0.1:7001/api/user/reviewlist/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d
    */
   async reviewList() {
-    const {type} = this.ctx.query;
     const {appid, openid} = this.ctx.wxuser;
-    const data = await this.service.register.reviewList({start: 0, stop: -1, openid, appid, type});
+    const data = await this.service.register.reviewList({start: 0, stop: -1, openid, appid});
+    this.ctx.body = {
+      success: !!data,
+      data,
+    };
+  }
+  /**
+   * GET /api/user/reviewhistory/:sid
+   * curl 127.0.0.1:7001/api/user/reviewhistory/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d
+   */
+  async reviewHistory() {
+    const {appid, openid} = this.ctx.wxuser;
+    const data = await this.service.register.reviewHistory({start: 0, stop: -1, openid, appid});
     this.ctx.body = {
       success: !!data,
       data,

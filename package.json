@@ -7,7 +7,8 @@
     "@types/ioredis": "^4.0.8",
     "egg": "^2.2.1",
     "egg-redis": "^2.0.0",
-    "egg-scripts": "^2.6.0"
+    "egg-scripts": "^2.6.0",
+    "qcloudsms_js": "^0.1.1"
   },
   "devDependencies": {
     "autod": "^3.0.1",

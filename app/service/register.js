@@ -6,7 +6,7 @@ class RegisterService extends Service {
   /**
    * @param {string} appid
    * @param {string} openid
-   * @param {{name: string; period: number; g3: number; wechat: string; mobile: string; classmates: string;}} info
+   * @param {{name: string; period: number; g3: number; wechat: string; mobile: string; classmates: string; message?: string}} info
    */
   async applyFor(appid, openid, info) {
     const {PENDING} = this.ctx.helper;
@@ -68,20 +68,17 @@ class RegisterService extends Service {
   }
 
   /**
-   * @param {{appid: string, openid: string, start: number, stop: number, type?:string}} params
+   * @param {{appid: string, openid: string, start: number, stop: number}} params
    */
   async reviewList(params) {
     // @ts-ignore
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
-    const {start, stop, openid, appid, type} = params;
+    const {start, stop, openid, appid} = params;
 
     const reviewer = await redis.hgetall(`${appid}:user:${openid}`);
     const {CADMIN, ADMIN} = this.ctx.helper;
     let key = '';
-    let typekey = 'apply_list';
-    if (type === 'reviewed') {
-      typekey = 'reviewed_list';
-    }
+    const typekey = 'apply_list';
     if (reviewer.role === ADMIN) {
       key = `${appid}:${typekey}:admin`;
     } else if (reviewer.role === CADMIN) {
@@ -92,6 +89,37 @@ class RegisterService extends Service {
     if (key) {
       /** @type string[] */
       const ids = await redis.zrange(key, start, stop);
+      const list = await Promise.all(ids.map(id => {
+        return redis.hgetall(`${appid}:apply:${id}`);
+      }));
+      return list.map((item, index) => {
+        return {...item, uid: ids[index]};
+      });
+    }
+    return null;
+  }
+  /**
+   * @param {{appid: string, openid: string, start: number, stop: number}} params
+   */
+  async reviewHistory(params) {
+    // @ts-ignore
+    const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
+    const {start, stop, openid, appid} = params;
+
+    const reviewer = await redis.hgetall(`${appid}:user:${openid}`);
+    const {CADMIN, ADMIN} = this.ctx.helper;
+    let key = '';
+    const typekey = 'reviewed_list';
+    if (reviewer.role === ADMIN) {
+      key = `${appid}:${typekey}:admin`;
+    } else if (reviewer.role === CADMIN) {
+      if (reviewer.g3 && reviewer.period) {
+        key = `${appid}:${typekey}:${reviewer.period}-${reviewer.g3}`;
+      }
+    }
+    if (key) {
+      /** @type string[] */
+      const ids = await redis.lrange(key, start, stop);
       const list = await Promise.all(ids.map(id => {
         return redis.hgetall(`${appid}:apply:${id}`);
       }));
@@ -147,13 +175,12 @@ class RegisterService extends Service {
     const allReviewedKey = `${appid}:reviewed_list:admin`;
 
     const result = await redis.multi().hmset(applyKey, new Map(data))
+      .rename(applyKey, `${applyKey}:${now}`)
       .hmset(uidKey, ...reviewInfo)
       .zrem(applySetKey, uid)
       .zrem(allApplySetKey, uid)
-      // @ts-ignore
-      .zadd(reviewedKey, now, uid)
-      .zadd(allReviewedKey, now, uid)
-      // @ts-ignore
+      .lpush(allReviewedKey, `${uid}:${now}`)
+      .lpush(reviewedKey, `${uid}:${now}`)
       .exec().catch(e => {
         this.ctx.logger.error(e);
         return false;
