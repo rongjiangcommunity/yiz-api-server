@@ -17,4 +17,3 @@ COPY . /home/admin/app
 RUN npm install --production
 
 CMD [ "npm", "run", "start" ]
-# ENTRYPOINT ["/home/admin/wechat-auth/start.sh"]
