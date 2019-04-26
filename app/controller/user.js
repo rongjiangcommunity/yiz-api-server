@@ -2,10 +2,20 @@
 
 const Controller = require('egg').Controller;
 
-// period 届
-const requiredFileds = 'name,gender,mobile,period,g3,country,province,city,email,wechat';
-const otherFileds = 'g2,g1,degree,university,residence,hobby,work';
-const limitFileds = ['period', 'g3', 'name'];
+/**
+ * 个人信息
+ * 认证信息：name,period,g3
+ * 手机：countryCode, phoneNumber
+ * 联系方式：wechat,email,mobile
+ * 地区、地址：region,address [country,province,city]
+ * 教育经历：education=[{what,where,when}]
+ * 工作经历：experience=[{what,where,when}]
+ * 感情状况：personalStatus 0,1,23 ['单身', '恋爱', '未婚', '已婚']
+ * 性别：gender [male, femal]
+ * 其他：wxinfo
+ */
+// eslint-disable-next-line max-len
+const userFileds = 'countryCode,phoneNumber,wechat,personalStatus,email,mobile,region,address,country,province,city,gender,wxinfo,education,experience';
 
 class UserController extends Controller {
   /**
@@ -28,17 +38,14 @@ class UserController extends Controller {
     const {appid, openid} = this.ctx.wxuser;
     const params = this.ctx.request.body;
 
-    const info = await this.service.user.info(appid, openid);
-    let approved = false;
-    if (info && info.approved === 'true') {
-      approved = true;
-    }
+    // const info = await this.service.user.info(appid, openid);
     const data = Object.entries(params).filter(([k, v]) => {
-      // 已认证校友限制修改
-      if (approved && limitFileds.indexOf(k) >= 0) {
-        return false;
+      return (userFileds.indexOf(k)>=0 && v);
+    }).map( ([k, v]) => {
+      if (v !== null && typeof v === 'object') {
+        return [k, JSON.stringify(v)];
       }
-      return (requiredFileds.indexOf(k)>=0 && v) || otherFileds.indexOf(k) >=0;
+      return [k, v];
     });
     // this.logger.info('data', data);
     const result = await this.service.user.save(appid, openid, data);

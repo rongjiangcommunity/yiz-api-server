@@ -31,17 +31,3 @@ exports.OK = OK;
 exports.NOT_OK = NOT_OK;
 exports.PENDING = PENDING;
 exports.statusEnum = [OK, NOT_OK, PENDING];
-
-
-/**
- * 用户信息
- */
-const requiredFileds = 'name,gender,mobile,period,g3,country,province,city,email,wechat';
-const optionalFileds = 'g2,g1,degree,university,residence,hobby,work';
-const limitFileds = ['period', 'g3', 'name'];
-
-exports.userFileds = {
-  requiredFileds,
-  optionalFileds,
-  limitFileds,
-};
