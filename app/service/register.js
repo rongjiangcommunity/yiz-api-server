@@ -169,16 +169,15 @@ class RegisterService extends Service {
         reviewInfo.push('period', period);
       }
     }
-    const applySetKey = `${appid}:apply_list:${period}-${g3}`;
-    const allApplySetKey = `${appid}:apply_list:admin`;
+    const applyListKey = `${appid}:apply_list:${period}-${g3}`;
+    const allApplyListKey = `${appid}:apply_list:admin`;
     const reviewedKey = `${appid}:reviewed_list:${period}-${g3}`;
     const allReviewedKey = `${appid}:reviewed_list:admin`;
 
     const result = await redis.multi().hmset(applyKey, new Map(data))
-      .rename(applyKey, `${applyKey}:${now}`)
       .hmset(uidKey, ...reviewInfo)
-      .zrem(applySetKey, uid)
-      .zrem(allApplySetKey, uid)
+      .zrem(applyListKey, uid)
+      .zrem(allApplyListKey, uid)
       .lpush(allReviewedKey, `${uid}:${now}`)
       .lpush(reviewedKey, `${uid}:${now}`)
       .exec().catch(e => {
@@ -186,6 +185,10 @@ class RegisterService extends Service {
         return false;
       });
     this.ctx.logger.info('multi result', result);
+    if (result) {
+      const applyData = await redis.hgetall(applyKey);
+      await redis.hmset(`${applyKey}:${now}`, new Map(Object.entries(applyData)));
+    }
     return !!result;
   }
 }
