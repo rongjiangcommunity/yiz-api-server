@@ -4,6 +4,7 @@
   "description": "server for wechat login",
   "private": true,
   "dependencies": {
+    "@hapi/joi": "^15.0.0",
     "@types/ioredis": "^4.0.8",
     "egg": "^2.2.1",
     "egg-redis": "^2.0.0",
