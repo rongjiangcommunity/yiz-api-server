@@ -6,7 +6,7 @@ class RegisterService extends Service {
   /**
    * @param {string} appid
    * @param {string} openid
-   * @param {{name: string; period: number; g3: number; wechat: string; mobile: string; classmates: string; message?: string}} info
+   * @param {{name: string; period: number; g3: number; g2?: number; g1?: number; wechat: string; mobile: string; gender?:string, classmates: string; message?: string}} info
    */
   async applyFor(appid, openid, info) {
     const {PENDING} = this.ctx.helper;

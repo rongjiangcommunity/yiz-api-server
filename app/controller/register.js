@@ -9,7 +9,8 @@ class RegisterController extends Controller {
    */
   async applyFor() {
     const {appid, openid} = this.ctx.wxuser;
-    const {name, period, g3, wechat, mobile, classmates, message} = this.ctx.request.body;
+    // eslint-disable-next-line max-len
+    const {name, period, g3, wechat, mobile, classmates, message, g2, g1, gender} = this.ctx.request.body;
     if ( !isPositive(period) || !isPositive(g3)) {
       this.ctx.body = {
         success: false,
@@ -26,7 +27,7 @@ class RegisterController extends Controller {
     //   return;
     // }
     const result = await this.service.register.applyFor(appid, openid, {
-      name, period, g3, wechat, mobile, classmates, message,
+      name, period, g3, wechat, mobile, classmates, message, g2, g1, gender,
     });
 
     this.ctx.body = {
