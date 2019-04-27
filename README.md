@@ -45,7 +45,7 @@ docker run --network wechat-net -p:6379:6379 --name wx-redis -d redis redis-serv
 docker exec -it wx-redis redis-cli HMSET app:yiz appid ${appid} secret ${serect}
 docker exec -it wx-redis redis-cli set app:authtoken $token
 
-docker run --rm -d --network wechat-net -p:6001:7001 --name wechat-auth jiewei/wechat-auth
+docker run -d --network wechat-net -v /home/admin/wechat-auth:/home/admin/app -p:6001:7001 --name wechat-auth jiewei/wechat-auth
 ```
 
 #### build & push

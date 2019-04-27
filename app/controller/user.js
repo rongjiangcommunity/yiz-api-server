@@ -10,7 +10,7 @@ const Controller = require('egg').Controller;
  * 地区、地址：region,address [country,province,city]
  * 教育经历：education=[{what,where,when}]
  * 工作经历：experience=[{what,where,when}]
- * 感情状况：personalStatus 0,1,23 ['单身', '恋爱', '未婚', '已婚']
+ * 感情状况：personalStatus 0,1,2 ['单身', '恋爱中', '已婚']
  * 性别：gender [male, femal]
  * 其他：wxinfo
  */
