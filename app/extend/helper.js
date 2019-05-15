@@ -17,6 +17,11 @@ exports.ADMIN = ADMIN;
 exports.CADMIN = CADMIN;
 exports.GADMIN = GADMIN;
 exports.XIAOYOU = XIAOYOU;
+/**
+ * CADMIN: 班级管理员
+ * GADMIN: 年级管理员
+ * ADMIN: 管理员
+ */
 exports.roles = ['', XIAOYOU, CADMIN, GADMIN, ADMIN];
 
 

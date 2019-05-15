@@ -39,12 +39,14 @@ class RegisterService extends Service {
     data.push(['gmt_modified', now]);
 
     const applySetKey = `${appid}:apply_list:${period}-${g3}`;
+    const gadminApplySetKey = `${appid}:apply_list:${period}`;
     const allApplySetKey = `${appid}:apply_list:admin`;
 
     const result = await redis.multi()
       .hmset(key, new Map(data))
       // @ts-ignore
       .zadd(applySetKey, now, openid)
+      .zadd(gadminApplySetKey, now, openid)
       .zadd(allApplySetKey, now, openid)
       .exec().then(() => {
         return true;
@@ -76,11 +78,15 @@ class RegisterService extends Service {
     const {start, stop, openid, appid} = params;
 
     const reviewer = await redis.hgetall(`${appid}:user:${openid}`);
-    const {CADMIN, ADMIN} = this.ctx.helper;
+    const {CADMIN, GADMIN, ADMIN} = this.ctx.helper;
     let key = '';
     const typekey = 'apply_list';
     if (reviewer.role === ADMIN) {
       key = `${appid}:${typekey}:admin`;
+    } else if (reviewer.role === GADMIN) {
+      if (reviewer.period) {
+        key = `${appid}:${typekey}:${reviewer.period}`;
+      }
     } else if (reviewer.role === CADMIN) {
       if (reviewer.g3 && reviewer.period) {
         key = `${appid}:${typekey}:${reviewer.period}-${reviewer.g3}`;
@@ -107,11 +113,15 @@ class RegisterService extends Service {
     const {start, stop, openid, appid} = params;
 
     const reviewer = await redis.hgetall(`${appid}:user:${openid}`);
-    const {CADMIN, ADMIN} = this.ctx.helper;
+    const {CADMIN, GADMIN, ADMIN} = this.ctx.helper;
     let key = '';
     const typekey = 'reviewed_list';
     if (reviewer.role === ADMIN) {
       key = `${appid}:${typekey}:admin`;
+    } else if (reviewer.role === GADMIN) {
+      if (reviewer.period) {
+        key = `${appid}:${typekey}:${reviewer.period}`;
+      }
     } else if (reviewer.role === CADMIN) {
       if (reviewer.g3 && reviewer.period) {
         key = `${appid}:${typekey}:${reviewer.period}-${reviewer.g3}`;
@@ -170,16 +180,20 @@ class RegisterService extends Service {
       }
     }
     const applyListKey = `${appid}:apply_list:${period}-${g3}`;
+    const gadminApplyListKey = `${appid}:apply_list:${period}`;
     const allApplyListKey = `${appid}:apply_list:admin`;
+    const gadminReviewedKey = `${appid}:reviewed_list:${period}`;
     const reviewedKey = `${appid}:reviewed_list:${period}-${g3}`;
     const allReviewedKey = `${appid}:reviewed_list:admin`;
 
     const result = await redis.multi().hmset(applyKey, new Map(data))
       .hmset(uidKey, ...reviewInfo)
       .zrem(applyListKey, uid)
+      .zrem(gadminApplyListKey, uid)
       .zrem(allApplyListKey, uid)
-      .lpush(allReviewedKey, `${uid}:${now}`)
       .lpush(reviewedKey, `${uid}:${now}`)
+      .lpush(gadminReviewedKey, `${uid}:${now}`)
+      .lpush(allReviewedKey, `${uid}:${now}`)
       .exec().catch(e => {
         this.ctx.logger.error(e);
         return false;

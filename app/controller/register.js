@@ -5,7 +5,7 @@ const Controller = require('egg').Controller;
 class RegisterController extends Controller {
   /**
    * POST /api/user/apply/:sid
-   * curl -X POST 127.0.0.1:7001/api/user/apply/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d  -H 'Content-Type: application/json' -d '{"name":"ljw", "period":88, "g3": 10, "wechat": "wx123", "mobile": "123", "classmates":"c1,c2,c3", "message": "hello"}'
+   * curl -X POST 127.0.0.1:7001/api/user/apply/yiz:dc48d25fd2c9b0cfead5301358ab371535439156329de21a0d3f57f2ec535f67  -H 'Content-Type: application/json' -d '{"name":"ljw", "period":88, "g3": 10, "wechat": "wx123", "mobile": "123", "classmates":"c1,c2,c3", "message": "hello"}'
    */
   async applyFor() {
     const {appid, openid} = this.ctx.wxuser;
@@ -36,7 +36,7 @@ class RegisterController extends Controller {
   }
   /**
    * GET /api/user/apply/:sid
-   * curl 127.0.0.1:7001/api/user/apply/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d
+   * curl 127.0.0.1:7001/api/user/apply/yiz:dc48d25fd2c9b0cfead5301358ab371535439156329de21a0d3f57f2ec535f67
    */
   async applyInfo() {
     const {appid, openid} = this.ctx.wxuser;
@@ -49,11 +49,15 @@ class RegisterController extends Controller {
 
   /**
    * GET /api/user/reviewlist/:sid
-   * curl 127.0.0.1:7001/api/user/reviewlist/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d
+   * curl 127.0.0.1:7001/api/user/reviewlist/yiz:dc48d25fd2c9b0cfead5301358ab371535439156329de21a0d3f57f2ec535f67
    */
   async reviewList() {
     const {appid, openid} = this.ctx.wxuser;
-    const data = await this.service.register.reviewList({start: 0, stop: -1, openid, appid});
+    let {start, stop} = this.ctx.query;
+    start = start || 0;
+    stop = stop || 64;
+
+    const data = await this.service.register.reviewList({start, stop, openid, appid});
     this.ctx.body = {
       success: !!data,
       data,
@@ -61,11 +65,14 @@ class RegisterController extends Controller {
   }
   /**
    * GET /api/user/reviewhistory/:sid
-   * curl 127.0.0.1:7001/api/user/reviewhistory/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d
+   * curl 127.0.0.1:7001/api/user/reviewhistory/yiz:dc48d25fd2c9b0cfead5301358ab371535439156329de21a0d3f57f2ec535f67
    */
   async reviewHistory() {
     const {appid, openid} = this.ctx.wxuser;
-    const data = await this.service.register.reviewHistory({start: 0, stop: -1, openid, appid});
+    let {start, stop} = this.ctx.query;
+    start = start || 0;
+    stop = stop || -1;
+    const data = await this.service.register.reviewHistory({start, stop, openid, appid});
     this.ctx.body = {
       success: !!data,
       data,
@@ -73,7 +80,7 @@ class RegisterController extends Controller {
   }
   /**
    * GET /api/user/review/:sid/:uid
-   * curl 127.0.0.1:7001/api/user/review/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d/o-YIv5TyMkOjeXljbwY6CqScAdq4
+   * curl 127.0.0.1:7001/api/user/review/yiz:dc48d25fd2c9b0cfead5301358ab371535439156329de21a0d3f57f2ec535f67/o-YIv5TyMkOjeXljbwY6CqScAdq4
    */
   async reviewInfo() {
     this.ctx.body = {
@@ -83,7 +90,7 @@ class RegisterController extends Controller {
   }
   /**
    * POST /api/user/review/:sid/:uid
-   * curl -X POST 127.0.0.1:7001/api/user/review/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d/o-YIv5TyMkOjeXljbwY6CqScAdq4 -H 'Content-Type: application/json' -d '{"comment":"优秀", "approved":true, "uid": "o-YIv5TyMkOjeXljbwY6CqScAdq4"}'
+   * curl -X POST 127.0.0.1:7001/api/user/review/yiz:dc48d25fd2c9b0cfead5301358ab371535439156329de21a0d3f57f2ec535f67/o-YIv5TyMkOjeXljbwY6CqScAdq4 -H 'Content-Type: application/json' -d '{"comment":"优秀", "approved":true, "uid": "o-YIv5TyMkOjeXljbwY6CqScAdq4"}'
    */
   async review() {
     const {appid, openid} = this.ctx.wxuser;

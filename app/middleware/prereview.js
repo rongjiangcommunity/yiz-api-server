@@ -25,7 +25,7 @@ module.exports = () => {
       if (!isClassmate(u1, u2)) {
         ctx.body = {
           success: false,
-          msg: 'not classmate',
+          msg: 'Not allowed!',
         };
         return;
       }
