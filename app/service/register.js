@@ -147,6 +147,7 @@ class RegisterService extends Service {
    */
   async review(appid, openid, params) {
     const {OK, NOT_OK} = this.ctx.helper;
+    const presetAdmins = this.config.presetAdmins || {};
     // @ts-ignore
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
     const now = Date.now();
@@ -160,7 +161,7 @@ class RegisterService extends Service {
     const uidKey = `${appid}:user:${uid}`;
     const applyKey = `${appid}:apply:${uid}`;
     const status = approved ? OK : NOT_OK;
-    const {period, g3, name} = await redis.hgetall(applyKey);
+    const {period, g3, name, mobile} = await redis.hgetall(applyKey);
 
     /** @type {[string, any][]} */
     const data = [];
@@ -177,6 +178,10 @@ class RegisterService extends Service {
         reviewInfo.push('name', name);
         reviewInfo.push('g3', g3);
         reviewInfo.push('period', period);
+        const info = presetAdmins && presetAdmins[`${period}-${mobile}`];
+        if (info && info.role) {
+          reviewInfo.push('role', info.role);
+        }
       }
     }
     const applyListKey = `${appid}:apply_list:${period}-${g3}`;

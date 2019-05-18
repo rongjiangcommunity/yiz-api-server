@@ -18,6 +18,16 @@ module.exports = app => {
     });
     app.config.authtoken = await redis.get('app:authtoken');
 
+    const adminsStr = await redis.get('yiz:admins');
+    if (adminsStr) {
+      const admins = JSON.parse(adminsStr);
+      app.config.presetAdmins = admins.reduce((pre, cur) => {
+        pre[`${cur.period}-${cur.mobile}`] = cur;
+        return pre;
+      }, {});
+    }
+
+
     // do not use in production
     redis.defineCommand('phgetall', {
       lua: `

@@ -90,11 +90,12 @@ class RegisterController extends Controller {
   }
   /**
    * POST /api/user/review/:sid/:uid
-   * curl -X POST 127.0.0.1:7001/api/user/review/yiz:dc48d25fd2c9b0cfead5301358ab371535439156329de21a0d3f57f2ec535f67/o-YIv5TyMkOjeXljbwY6CqScAdq4 -H 'Content-Type: application/json' -d '{"comment":"优秀", "approved":true, "uid": "o-YIv5TyMkOjeXljbwY6CqScAdq4"}'
+   * curl -X POST 127.0.0.1:7001/api/user/review/yiz:dc48d25fd2c9b0cfead5301358ab371535439156329de21a0d3f57f2ec535f67/o-YIv5TyMkOjeXljbwY6CqScAdq4 -H 'Content-Type: application/json' -d '{"comment":"优秀", "approved":true}'
    */
   async review() {
     const {appid, openid} = this.ctx.wxuser;
-    const {comment, approved, uid} = this.ctx.request.body;
+    const {uid} = this.ctx.params;
+    const {comment, approved} = this.ctx.request.body;
     const result = await this.service.register.review(appid, openid, {
       comment,
       approved,
