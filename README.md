@@ -17,10 +17,6 @@ curl -X POST -H 'Content-Type: application/json' --data '{"code":"023ey3Ts00Gc8d
 curl -X POST -H 'Content-Type: application/json' --data '{"credentials":"yiz:f166d608e398a066f1016131e296069d2d9992b3c82a0b6ae09ec56fdcac42be"}' 127.0.0.1:7001/api/wechat/expire
 ```
 
-## QuickStart
-
-see [egg docs][egg] for more detail.
-
 ### Development
 
 ```sh
@@ -31,23 +27,31 @@ open http://localhost:7001/
 
 ### Deploy
 
-#### start server
+#### server start
 
 ```sh
 docker network create wechat-net
-
 docker pull jiewei/wechat-auth
 docker pull redis
 
-docker run --network wechat-net --name wechat-redis -d redis redis-server --appendonly yes
+# redis
+docker run -d --network wechat-net \
+-v /home/admin/data/wechat-redis:/data \
+-v /home/admin/conf/redis/redis.conf:/usr/local/etc/redis/redis.conf \
+-p:6379:6379 --name wechat-redis redis \
+redis-server /usr/local/etc/redis/redis.conf --appendonly yes
 
 # set app config in db
-docker exec -it redis redis-cli HMSET app:yiz appid ${appid} secret ${serect}
+docker exec -it wechat-redis redis-cli -a $auth HMSET app:yiz appid $appid secret $serect
+docker exec -it wechat-redis redis-cli -a $auth set app:authtoken $token
 
-docker run -d --network wechat-net -p:6001:7001 --name wechat-auth jiewei/wechat-auth
+# app
+docker run -d --network wechat-net \
+-v /home/admin/wechat-auth:/home/admin/app \
+-p:6001:7001 --name wechat-auth jiewei/wechat-auth
 ```
 
-#### build & push
+#### docker build & upload
 
 ```sh
 docker build . -t jiewei/wechat-auth
@@ -67,10 +71,23 @@ sudo firewall-cmd --permanent --zone=public --add-service=http
 sudo firewall-cmd --permanent --zone=public --add-service=https
 sudo firewall-cmd --reload
 
-
 sudo systemctl enable nginx
 sudo systemctl restart nginx
 
+vi /etc/nginx/nginx.conf
+```
+
+## debug lua in redis
+
+```sh
+redis-cli -p 6380  --eval phgetall.lua 0 , yiz:user:*
+redis-cli -p 6380  --eval pget.lua 0 , app:*
+```
+
+## backup
+
+```sh
+docker cp wechat-redis:/data /home/admin/data/redis/`date +"%Y%m%d_%H%M%S"`
 ```
 
 [egg]: https://eggjs.org

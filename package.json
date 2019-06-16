@@ -4,10 +4,12 @@
   "description": "server for wechat login",
   "private": true,
   "dependencies": {
+    "@hapi/joi": "^15.0.0",
     "@types/ioredis": "^4.0.8",
     "egg": "^2.2.1",
     "egg-redis": "^2.0.0",
-    "egg-scripts": "^2.6.0"
+    "egg-scripts": "^2.6.0",
+    "qcloudsms_js": "^0.1.1"
   },
   "devDependencies": {
     "autod": "^3.0.1",
@@ -34,9 +36,7 @@
     "cov": "egg-bin cov",
     "lint": "eslint .",
     "ci": "npm run lint && npm run cov",
-    "autod": "autod",
-    "docker:build": "docker build . -t jiewei/wechat-auth",
-    "docker:push": "docker push jiewei/wechat-auth"
+    "autod": "autod"
   },
   "ci": {
     "version": "8"
