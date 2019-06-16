@@ -2,9 +2,9 @@
 
 Auth server for wechat login
 
-![img](https://developers.weixin.qq.com/miniprogram/dev/image/api-login.jpg?t=18080318)
+![img](https://res.wx.qq.com/wxdoc/dist/assets/img/api-login.2fcc9f35.jpg)
 
-refer to: https://developers.weixin.qq.com/miniprogram/dev/api/api-login.html
+more info: https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/login.html
 
 ## API
 
