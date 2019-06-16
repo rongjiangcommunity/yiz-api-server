@@ -16,6 +16,8 @@ module.exports = app => {
 
   router.post('/api/wechat/redeem', c.wechat.redeem);
   router.post('/api/wechat/expire', c.wechat.expire);
+  router.post('/api/wechat/decrypt/:sid', isWxLogin, c.wechat.decrypt);
+  // TODO: @deprecated
   router.post('/api/wechat/:sid/decrypt', isWxLogin, c.wechat.decrypt);
 
   router.get('/api/user/:sid', isWxLogin, c.user.info);
