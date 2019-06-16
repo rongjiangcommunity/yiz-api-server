@@ -29,6 +29,19 @@ class WechatController extends Controller {
       data: credentials,
     };
   }
+  async decrypt() {
+    const WXBizDataCrypt = require('../lib/wx-decrypt');
+    const {session_key: sessionKey} = this.ctx.wxuser;
+
+    const {encryptedData, iv, appId} = this.ctx.request.body;
+    const pc = new WXBizDataCrypt(appId, sessionKey);
+
+    const data = pc.decryptData(encryptedData, iv);
+    this.ctx.body = {
+      success: true,
+      data,
+    };
+  }
 }
 
 module.exports = WechatController;

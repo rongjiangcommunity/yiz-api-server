@@ -39,7 +39,7 @@ docker network create wechat-net
 docker pull jiewei/wechat-auth
 docker pull redis
 
-docker run --network wechat-net --name wx-redis -d redis redis-server --appendonly yes
+docker run --network wechat-net --name wechat-redis -d redis redis-server --appendonly yes
 
 # set app config in db
 docker exec -it redis redis-cli HMSET app:yiz appid ${appid} secret ${serect}
