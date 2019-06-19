@@ -58,7 +58,7 @@ docker build . -t jiewei/wechat-auth
 docker push jiewei/wechat-auth
 ```
 
-## nginx on centsOS
+## nginx on centOS
 
 https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7
 
