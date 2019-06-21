@@ -8,7 +8,7 @@ module.exports = (role) => {
   return async (ctx, next) => {
     // @ts-ignore
     const redis = /** @type {MyTypes.Redis} */(ctx.app.redis.get('redis'));
-    const roles = ctx.helper.roles;
+    const [roles, XIAOYOU] = ctx.helper;
     const {sid} = ctx.params;
     const [appid, sessionId] = (sid ||'').split(':');
     const {openid} = await redis.hgetall(`${appid}:credentials:${sessionId}`);
@@ -24,7 +24,8 @@ module.exports = (role) => {
     }
     const user = await redis.hgetall(`${appid}:user:${openid}`);
 
-    if (roles.indexOf(user.role) < roles.indexOf(role)) {
+    if (!user || role === XIAOYOU && user.approved !== 'true'
+      || roles.indexOf(user.role) < roles.indexOf(role)) {
       ctx.status = 403;
       ctx.body = {
         success: false,
