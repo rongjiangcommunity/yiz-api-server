@@ -36,3 +36,5 @@ exports.OK = OK;
 exports.NOT_OK = NOT_OK;
 exports.PENDING = PENDING;
 exports.statusEnum = [OK, NOT_OK, PENDING];
+
+exports.bookingStatusEnum = ['wait', 'active', 'completed', 'failed', 'cancel'];

@@ -1,6 +1,7 @@
+/* eslint-disable max-len */
 'use strict';
 
-const {CADMIN} = require('./extend/helper');
+const {CADMIN, XIAOYOU, ADMIN} = require('./extend/helper');
 
 /**
  * @param {Egg.Application} app - egg application
@@ -28,10 +29,20 @@ module.exports = app => {
   router.post('/api/user/apply/:sid', isWxLogin, c.register.applyFor);
   router.get('/api/user/apply/:sid', isWxLogin, c.register.applyInfo);
   router.get('/api/user/reviewlist/:sid', isWxLogin, checkRole(CADMIN), c.register.reviewList);
-  // eslint-disable-next-line max-len
   router.get('/api/user/reviewhistory/:sid', isWxLogin, checkRole(CADMIN), c.register.reviewHistory);
   router.get('/api/user/review/:sid/:uid', ...reviweMiddlewares, c.register.reviewInfo);
   router.post('/api/user/review/:sid/:uid', isWxLogin, checkRole(CADMIN), c.register.review);
+
+  router.get('/api/user/doctor/doctors/:sid', isWxLogin, c.doctor.doctors);
+  router.post('/api/user/doctor/booking/:sid', isWxLogin, checkRole(XIAOYOU), c.doctor.book);
+  router.get('/api/user/doctor/booking/:sid/:bid', isWxLogin, checkRole(XIAOYOU), c.doctor.mybooking);
+  router.get('/api/user/doctor/booking/:sid', isWxLogin, checkRole(XIAOYOU), c.doctor.mybookings);
+  router.post('/api/user/doctor/booking/rebook/:sid/:bid', isWxLogin, checkRole(XIAOYOU), c.doctor.rebook);
+  router.post('/api/user/doctor/booking/cancel/:sid/:bid', isWxLogin, checkRole(XIAOYOU), c.doctor.cancel);
+
+  router.get('/api/user/doctor/admin/booking/:sid/:bid', isWxLogin, checkRole(ADMIN), c.doctor.querybooking);
+  router.get('/api/user/doctor/admin/booking/:sid', isWxLogin, checkRole(ADMIN), c.doctor.querybookings);
+  router.post('/api/user/doctor/admin/booking/:sid/:bid', isWxLogin, checkRole(ADMIN), c.doctor.updatebooking);
 
   router.get('/api/query/hgetall/:pattern', authtoken, c.home.phgetall);
   router.get('/api/query/get/:pattern', authtoken, c.home.pget);
