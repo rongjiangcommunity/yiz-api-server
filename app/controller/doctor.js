@@ -122,11 +122,20 @@ class DoctorController extends Controller {
    * curl 127.0.0.1:7001/api/user/doctor/admin/booking/yiz:$sid/2
    */
   async querybooking() {
+    const {appid} = this.ctx.wxuser;
     const {bid} = this.ctx.params;
     const data = await this.service.doctor.queryBooking({
       bid,
     });
-    // TODO: query uid info @jiewei.ljw
+    if (data && data.uid) {
+      const info = await this.service.user.query(appid, data.uid);
+      if (info) {
+        data.user = {
+          uid: data.uid,
+          ...getUserinfo(info),
+        };
+      }
+    }
     this.ctx.body = {
       data,
       success: true,
@@ -142,6 +151,7 @@ class DoctorController extends Controller {
    * status: wait, active, completed, failed, cancel，可选
    */
   async querybookings() {
+    const {appid} = this.ctx.wxuser;
     let {status, start, end}= this.ctx.query;
     if (end < start) {
       [start, end] = [end, start];
@@ -149,7 +159,26 @@ class DoctorController extends Controller {
     const data = await this.service.doctor.queryBookings({
       status, start, end,
     });
-    // TODO: batch query uid info @jiewei.ljw
+    if (data && data.length) {
+      // @ts-ignore
+      const ids = data.map(d => d.uid);
+      const users = await this.service.user.batchQuery(appid, ids);
+      // @ts-ignore
+      const map = users.reduce((pre, cur) => {
+        pre[cur.id] = cur;
+        return pre;
+      }, {});
+      // @ts-ignore
+      data.forEach(d => {
+        const info = d && map[d.uid];
+        if (info) {
+          d.user = {
+            uid: d.uid,
+            ...getUserinfo(info),
+          };
+        }
+      });
+    }
     this.ctx.body = {
       data,
       success: true,
@@ -178,6 +207,23 @@ class DoctorController extends Controller {
       success: data,
     };
   }
+}
+
+/**
+ * @param {{ g3: any; period: any; name: any; phoneNumber: any; wechat: any; approved: any; }} info
+ */
+function getUserinfo(info) {
+  if (!info) {
+    return null;
+  }
+  return {
+    g3: info.g3,
+    period: info.period,
+    name: info.name,
+    phoneNumber: info.phoneNumber,
+    wechat: info.wechat,
+    approved: info.approved,
+  };
 }
 
 module.exports = DoctorController;

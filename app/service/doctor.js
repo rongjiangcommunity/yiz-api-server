@@ -62,7 +62,7 @@ class DoctorService extends Service {
       WHERE a.id = ${bid}
       AND a.uid = '${openid}'
     `;
-    return await client.query(sql);
+    return (await client.query(sql) || [])[0];
   }
   /**
    * @param {{openid: string, bid: number, action: string, note?: string}} params
@@ -111,7 +111,7 @@ class DoctorService extends Service {
       ON drid = b.id
       WHERE a.id = ${bid}
     `;
-    return client.query(sql);
+    return (await client.query(sql) || [])[0];
   }
   /**
    * @param {{start:number, end:number, status?: string}} params
@@ -143,7 +143,7 @@ class DoctorService extends Service {
       ${conditions.length? 'WHERE ' +conditions.join(' AND '): ''}
       limit 32
     `;
-    return client.query(sql);
+    return await client.query(sql);
   }
   /**
    *
