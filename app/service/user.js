@@ -13,6 +13,34 @@ class UserService extends Service {
     return await redis.hgetall(`${appid}:user:${openid}`);
   }
   /**
+   * @param {string} appid
+   * @param {string[]} openids
+   */
+  async batchQuery(appid, openids) {
+    // @ts-ignore
+    const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
+    const pipe = redis.multi();
+    openids.forEach(openid => {
+      pipe.hgetall(`${appid}:user:${openid}`);
+    });
+    const result = await pipe.exec();
+
+    if (result && result.length) {
+      // @ts-ignore
+      result.forEach((r, i) => {
+        if (!r[0] && r[1]) {
+          r[1]['id'] = openids[i];
+        }
+      });
+      // @ts-ignore
+      return result.filter(r => {
+        return r && !r[0];
+      // @ts-ignore
+      }).map(r => r[1]);
+    }
+    return null;
+  }
+  /**
    * @param {[string, any][]} data
    * @param {string} appid
    * @param {string} openid
