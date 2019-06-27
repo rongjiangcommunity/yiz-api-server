@@ -20,7 +20,7 @@ const userFileds = 'countryCode,phoneNumber,wechat,personalStatus,email,mobile,r
 class UserController extends Controller {
   /**
    * GET /api/user/:sid
-   * curl 127.0.0.1:7001/api/user/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d
+   * curl 127.0.0.1:7001/api/user/yiz:$sid
    */
   async info() {
     const {appid, openid} = this.ctx.wxuser;
@@ -32,7 +32,7 @@ class UserController extends Controller {
   }
   /**
    * POST /api/user/:sid
-   * curl -X POST 127.0.0.1:7001/api/user/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d  -H 'Content-Type: application/json' -d '{"name":"ljw", "gender":"male"}'
+   * curl -X POST 127.0.0.1:7001/api/user/yiz:$sid  -H 'Content-Type: application/json' -d '{"name":"ljw", "gender":"male"}'
    */
   async save() {
     const {appid, openid} = this.ctx.wxuser;
@@ -56,7 +56,7 @@ class UserController extends Controller {
   }
   /**
    * POST /api/user/feedback/:sid
-   * curl -X POST 127.0.0.1:7001/api/user/feedback/yiz:3e466730e285c1da19f0c40011ef45a3d57b8f292ffd17f48faf32895aa1a28d  -H 'Content-Type: application/json' -d '{"message":"awesome app"}'
+   * curl -X POST 127.0.0.1:7001/api/user/feedback/yiz:$sid  -H 'Content-Type: application/json' -d '{"message":"awesome app"}'
    */
   async feedback() {
     const {appid, openid} = this.ctx.wxuser;
