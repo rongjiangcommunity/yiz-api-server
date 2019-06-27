@@ -5,7 +5,7 @@ const Controller = require('egg').Controller;
 class RegisterController extends Controller {
   /**
    * POST /api/user/apply/:sid
-   * curl -X POST 127.0.0.1:7001/api/user/apply/yiz:dc48d25fd2c9b0cfead5301358ab371535439156329de21a0d3f57f2ec535f67  -H 'Content-Type: application/json' -d '{"name":"ljw", "period":88, "g3": 10, "wechat": "wx123", "mobile": "123", "classmates":"c1,c2,c3", "message": "hello"}'
+   * curl -X POST 127.0.0.1:7001/api/user/apply/yiz:$sid  -H 'Content-Type: application/json' -d '{"name":"ljw", "period":88, "g3": 10, "wechat": "wx123", "mobile": "123", "classmates":"c1,c2,c3", "message": "hello"}'
    */
   async applyFor() {
     const {appid, openid} = this.ctx.wxuser;
@@ -36,7 +36,7 @@ class RegisterController extends Controller {
   }
   /**
    * GET /api/user/apply/:sid
-   * curl 127.0.0.1:7001/api/user/apply/yiz:dc48d25fd2c9b0cfead5301358ab371535439156329de21a0d3f57f2ec535f67
+   * curl 127.0.0.1:7001/api/user/apply/yiz:$sid
    */
   async applyInfo() {
     const {appid, openid} = this.ctx.wxuser;
@@ -49,7 +49,7 @@ class RegisterController extends Controller {
 
   /**
    * GET /api/user/reviewlist/:sid
-   * curl 127.0.0.1:7001/api/user/reviewlist/yiz:dc48d25fd2c9b0cfead5301358ab371535439156329de21a0d3f57f2ec535f67
+   * curl 127.0.0.1:7001/api/user/reviewlist/yiz:$sid
    */
   async reviewList() {
     const {appid, openid} = this.ctx.wxuser;
@@ -65,7 +65,7 @@ class RegisterController extends Controller {
   }
   /**
    * GET /api/user/reviewhistory/:sid
-   * curl 127.0.0.1:7001/api/user/reviewhistory/yiz:dc48d25fd2c9b0cfead5301358ab371535439156329de21a0d3f57f2ec535f67
+   * curl 127.0.0.1:7001/api/user/reviewhistory/yiz:$sid
    */
   async reviewHistory() {
     const {appid, openid} = this.ctx.wxuser;
@@ -80,7 +80,7 @@ class RegisterController extends Controller {
   }
   /**
    * GET /api/user/review/:sid/:uid
-   * curl 127.0.0.1:7001/api/user/review/yiz:dc48d25fd2c9b0cfead5301358ab371535439156329de21a0d3f57f2ec535f67/o-YIv5TyMkOjeXljbwY6CqScAdq4
+   * curl 127.0.0.1:7001/api/user/review/yiz:$sid/o-YIv5TyMkOjeXljbwY6CqScAdq4
    */
   async reviewInfo() {
     this.ctx.body = {
@@ -90,7 +90,7 @@ class RegisterController extends Controller {
   }
   /**
    * POST /api/user/review/:sid/:uid
-   * curl -X POST 127.0.0.1:7001/api/user/review/yiz:dc48d25fd2c9b0cfead5301358ab371535439156329de21a0d3f57f2ec535f67/o-YIv5TyMkOjeXljbwY6CqScAdq4 -H 'Content-Type: application/json' -d '{"comment":"优秀", "approved":true}'
+   * curl -X POST 127.0.0.1:7001/api/user/review/yiz:$sid/o-YIv5TyMkOjeXljbwY6CqScAdq4 -H 'Content-Type: application/json' -d '{"comment":"优秀", "approved":true}'
    */
   async review() {
     const {appid, openid} = this.ctx.wxuser;
