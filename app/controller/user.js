@@ -24,7 +24,7 @@ class UserController extends Controller {
    */
   async info() {
     const {appid, openid} = this.ctx.wxuser;
-    const info = await this.service.user.info(appid, openid);
+    const info = await this.service.user.query(appid, openid);
     this.ctx.body = {
       data: info,
       success: true,
@@ -38,7 +38,7 @@ class UserController extends Controller {
     const {appid, openid} = this.ctx.wxuser;
     const params = this.ctx.request.body;
 
-    // const info = await this.service.user.info(appid, openid);
+    // const info = await this.service.user.query(appid, openid);
     const data = Object.entries(params).filter(([k, v]) => {
       return (userFileds.indexOf(k)>=0 && v);
     }).map( ([k, v]) => {

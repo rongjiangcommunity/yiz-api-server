@@ -18,7 +18,7 @@ class RegisterController extends Controller {
       };
       return;
     }
-    // const userinfo = await this.service.user.info(appid, openid);
+    // const userinfo = await this.service.user.query(appid, openid);
     // if (userinfo.approved === 'true') {
     //   this.ctx.body = {
     //     success: false,

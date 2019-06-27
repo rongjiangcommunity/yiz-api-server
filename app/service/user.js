@@ -7,7 +7,7 @@ class UserService extends Service {
    * @param {string} appid
    * @param {string} openid
    */
-  async info(appid, openid) {
+  async query(appid, openid) {
     // @ts-ignore
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
     return await redis.hgetall(`${appid}:user:${openid}`);
