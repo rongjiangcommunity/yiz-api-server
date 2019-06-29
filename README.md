@@ -41,8 +41,8 @@ docker run -d --network wechat-net \
 -p:6379:6379 --name wechat-redis redis \
 redis-server /usr/local/etc/redis/redis.conf --appendonly yes
 
-# set app config in db
-docker exec -it wechat-redis redis-cli -a $auth HMSET app:yiz appid $appid secret $serect
+# config app
+docker exec -it wechat-redis redis-cli -a $auth HMSET app:yiz:config appid $appid secret $serect sessionExSeconds 86400
 docker exec -it wechat-redis redis-cli -a $auth set app:authtoken $token
 
 # app
