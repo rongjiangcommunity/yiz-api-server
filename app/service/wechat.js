@@ -3,6 +3,7 @@
 const Service = require('egg').Service;
 const crypto = require('crypto');
 const secret = '93sa37i4pTFWA2l6gun/AA';
+const defaultExSeconds = 24*60*60;
 
 class WechatService extends Service {
   /**
@@ -15,6 +16,7 @@ class WechatService extends Service {
     const appConf = this.app.config.wechat.appConf || {};
     const urlPrefix = this.app.config.wechat.jscode2session;
     const {appid, code} = params;
+    const exSeconds = appConf.sessionExSeconds || defaultExSeconds;
 
     if (!appConf[appid]) {
       return {
@@ -42,14 +44,15 @@ class WechatService extends Service {
         if (c) {
           await redis.del(`${appid}:credentials:${c}`);
         }
-        // store openid
-        await redis.hmset(`${appid}:credentials:${sha256hash}`, {
+        const pipe = redis.pipeline();
+        pipe.hmset(`${appid}:credentials:${sha256hash}`, {
           openid: data.openid,
           session_key: data.session_key,
           unionid: data.unionid || '',
         });
-
-        await redis.set(`${appid}:session:${data.openid}`, sha256hash);
+        pipe.expire(`${appid}:credentials:${sha256hash}`, exSeconds);
+        pipe.set(`${appid}:session:${data.openid}`, sha256hash, 'EX', exSeconds);
+        await pipe.exec();
         this.logger.info('jscode credentials', sha256hash);
       }
     }

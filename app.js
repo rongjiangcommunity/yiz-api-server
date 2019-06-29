@@ -9,11 +9,17 @@ module.exports = app => {
     const apps = app.config.wechat.apps || [];
 
     const result = await Promise.all(apps.map(a => {
-      return redis.hgetall(`${a}:appsecret`);
+      return redis.hgetall(`app:${a}:config`);
     }));
     apps.forEach((a, i) => {
-      if (result[i]) {
-        app.config.wechat.appConf[a] = result[i];
+      const conf = result[i];
+      if (conf && typeof conf === 'object') {
+        for (const [key, value] of Object.entries(conf)) {
+          if (Number(value) > 0) {
+            conf[key] = Number(value);
+          }
+        }
+        app.config.wechat.appConf[a] = conf;
       }
     });
     app.config.authtoken = await redis.get('app:authtoken');
