@@ -132,7 +132,12 @@ class DoctorService extends Service {
     const conditions = [];
 
     if (status) {
-      conditions.push(`a.status = '${status}'`);
+      const statuses = status.split(',');
+      if (statuses.length > 1) {
+        conditions.push(`a.status in ('${statuses.join('\',\'')}')`);
+      } else {
+        conditions.push(`a.status = '${status}'`);
+      }
     }
     if (start > 0) {
       start = start/1000;
