@@ -5,8 +5,8 @@ const Controller = require('egg').Controller;
 
 class DoctorController extends Controller {
   /**
-   * GET /api/user/doctor/doctors/:sid
-   * curl 127.0.0.1:7001/api/user/doctor/doctors/yiz:$sid
+   * GET /api/doctor/doctors/:sid
+   * curl 127.0.0.1:7001/api/doctor/doctors/yiz:$sid
    */
   async doctors() {
     const data = await this.service.doctor.doctors();
@@ -16,8 +16,8 @@ class DoctorController extends Controller {
     };
   }
   /**
-   * POST /api/user/doctor/booking/:sid
-   * curl -X POST 127.0.0.1:7001/api/user/doctor/booking/yiz:$sid -H 'Content-Type: application/json' -d '{"regDate":"2019-06-24", "note":"挂号看病", "drid": 1}'
+   * POST /api/doctor/booking/:sid
+   * curl -X POST 127.0.0.1:7001/api/doctor/booking/yiz:$sid -H 'Content-Type: application/json' -d '{"regDate":"2019-06-24", "note":"挂号看病", "drid": 1}'
    */
   async book() {
     const {openid} = this.ctx.wxuser;
@@ -53,8 +53,8 @@ class DoctorController extends Controller {
     }
   }
   /**
-   * GET /api/user/doctor/booking/:sid/:bid
-   * curl 127.0.0.1:7001/api/user/doctor/booking/yiz:$sid/1
+   * GET /api/doctor/booking/:sid/:bid
+   * curl 127.0.0.1:7001/api/doctor/booking/yiz:$sid/1
    */
   async mybooking() {
     const {openid} = this.ctx.wxuser;
@@ -68,8 +68,8 @@ class DoctorController extends Controller {
     };
   }
   /**
-   * GET /api/user/doctor/booking/:sid
-   * curl 127.0.0.1:7001/api/user/doctor/booking/yiz:$sid
+   * GET /api/doctor/booking/:sid
+   * curl 127.0.0.1:7001/api/doctor/booking/yiz:$sid
    */
   async mybookings() {
     const {openid} = this.ctx.wxuser;
@@ -87,8 +87,8 @@ class DoctorController extends Controller {
     };
   }
   /**
-   * POST /api/user/doctor/booking/rebook/:sid/:bid
-   * curl -X POST 127.0.0.1:7001/api/user/doctor/booking/rebook/yiz:$sid/1
+   * POST /api/doctor/booking/rebook/:sid/:bid
+   * curl -X POST 127.0.0.1:7001/api/doctor/booking/rebook/yiz:$sid/1
    */
   async rebook() {
     const {openid} = this.ctx.wxuser;
@@ -103,8 +103,8 @@ class DoctorController extends Controller {
     };
   }
   /**
-   * POST /api/user/doctor/booking/cancel/:sid/:bid
-   * curl -X POST 127.0.0.1:7001/api/user/doctor/booking/cancel/yiz:$sid/1
+   * POST /api/doctor/booking/cancel/:sid/:bid
+   * curl -X POST 127.0.0.1:7001/api/doctor/booking/cancel/yiz:$sid/1
    */
   async cancel() {
     const {openid} = this.ctx.wxuser;
@@ -119,8 +119,8 @@ class DoctorController extends Controller {
   }
 
   /**
-   * GET /api/user/doctor/admin/booking/count/undone/:sid
-   * curl 127.0.0.1:7001/api/user/doctor/admin/booking/count/undone/:sid
+   * GET /api/doctor/admin/booking/count/undone/:sid
+   * curl 127.0.0.1:7001/api/doctor/admin/booking/count/undone/:sid
    */
   async countUndone() {
     // const {appid} = this.ctx.wxuser;
@@ -132,8 +132,8 @@ class DoctorController extends Controller {
   }
 
   /**
-   * GET /api/user/doctor/admin/booking/:sid/:bid
-   * curl 127.0.0.1:7001/api/user/doctor/admin/booking/yiz:$sid/2
+   * GET /api/doctor/admin/booking/:sid/:bid
+   * curl 127.0.0.1:7001/api/doctor/admin/booking/yiz:$sid/2
    */
   async querybooking() {
     const {appid} = this.ctx.wxuser;
@@ -156,8 +156,8 @@ class DoctorController extends Controller {
     };
   }
   /**
-   * GET /api/user/doctor/admin/booking/:sid
-   * curl 127.0.0.1:7001/api/user/doctor/admin/booking/yiz:$sid?status=wait&start=1561376343000&end=1561389673000
+   * GET /api/doctor/admin/booking/:sid
+   * curl 127.0.0.1:7001/api/doctor/admin/booking/yiz:$sid?status=wait&start=1561376343000&end=1561389673000
    *
    * query 参数
    * start: 时间戳，可选
@@ -199,8 +199,8 @@ class DoctorController extends Controller {
     };
   }
   /**
-   * POST /api/user/doctor/admin/booking/:sid/:bid
-   * curl -X POST 127.0.0.1:7001/api/user/doctor/admin/booking/yiz:$sid/1 -H 'Content-Type: application/json' -d '{"fbNote":"好的，马上处理", "status":"active"}'
+   * POST /api/doctor/admin/booking/:sid/:bid
+   * curl -X POST 127.0.0.1:7001/api/doctor/admin/booking/yiz:$sid/1 -H 'Content-Type: application/json' -d '{"fbNote":"好的，马上处理", "status":"active"}'
    */
   async updatebooking() {
     const bookingStatusEnum = this.ctx.helper.bookingStatusEnum;
