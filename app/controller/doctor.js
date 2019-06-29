@@ -117,6 +117,20 @@ class DoctorController extends Controller {
       success: data,
     };
   }
+
+  /**
+   * GET /api/user/doctor/admin/booking/count/undone/:sid
+   * curl 127.0.0.1:7001/api/user/doctor/admin/booking/count/undone/:sid
+   */
+  async countUndone() {
+    // const {appid} = this.ctx.wxuser;
+    const data = await this.service.doctor.countUndone();
+    this.ctx.body = {
+      success: true,
+      data,
+    };
+  }
+
   /**
    * GET /api/user/doctor/admin/booking/:sid/:bid
    * curl 127.0.0.1:7001/api/user/doctor/admin/booking/yiz:$sid/2

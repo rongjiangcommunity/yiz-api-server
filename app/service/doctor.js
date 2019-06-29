@@ -96,6 +96,15 @@ class DoctorService extends Service {
     }
     return false;
   }
+  async countUndone() {
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const status = '\'wait\', \'active\'';
+    const sql = `
+      SELECT COUNT(*) as cnt FROM doctor_booking WHERE status in (${status})
+    `;
+    return ((await client.query(sql) || [])[0] || {}).cnt;
+  }
   /**
    * @param {{bid: number}} params
    */
