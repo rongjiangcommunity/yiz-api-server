@@ -30,7 +30,7 @@ class WechatService extends Service {
     const querys = `appid=${config.appid}&secret=${config.secret}&js_code=${code}&grant_type=authorization_cod`;
     const result = await this.ctx.curl(`${urlPrefix}?${querys}`, {dataType: 'json'});
 
-    this.logger.info('jscode result', result);
+    // this.logger.info('jscode result', result);
 
     if (result && result.status === 200) {
       const data = result.data;

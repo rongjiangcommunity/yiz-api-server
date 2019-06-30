@@ -24,7 +24,8 @@ module.exports = (role) => {
     }
     const user = await redis.hgetall(`${appid}:user:${openid}`);
 
-    if (roles.indexOf(user.role) < roles.indexOf(role)) {
+    if (!user || role === ctx.helper.XIAOYOU && user.approved !== 'true'
+      || roles.indexOf(user.role) < roles.indexOf(role)) {
       ctx.status = 403;
       ctx.body = {
         success: false,

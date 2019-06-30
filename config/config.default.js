@@ -20,6 +20,18 @@ module.exports = appInfo => {
       },
     },
   };
+  exports.mysql = {
+    clients: {
+      yiz: {
+        host: 'wechat-mysql',
+        port: '3306',
+        user: 'yizhong',
+        password: '$password',
+        database: 'yiz',
+        timezone: 'utc',
+      },
+    },
+  };
   config.wechat = {
     jscode2session: 'https://api.weixin.qq.com/sns/jscode2session',
     apps: ['yiz'],
