@@ -39,18 +39,9 @@ class DoctorController extends Controller {
       reg_date: regDate,
       note,
     });
-    if (data && data.affectedRows === 1) {
-      this.ctx.body = {
-        data,
-        success: true,
-      };
-    } else {
-      // TODO: return error msg @jiewei.ljw
-      this.ctx.body = {
-        msg: '',
-        success: false,
-      };
-    }
+    this.ctx.body = {
+      success: data && data.affectedRows === 1,
+    };
   }
   /**
    * GET /api/doctor/booking/:sid/:bid
