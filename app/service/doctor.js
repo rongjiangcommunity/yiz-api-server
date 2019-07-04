@@ -24,7 +24,8 @@ class DoctorService extends Service {
   async book(row) {
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
-    return await client.insert('doctor_booking', row);
+    const data = await client.insert('doctor_booking', row);
+    return data && data.affectedRows === 1;
   }
   /**
    * @param {{start?: number, end?: number, openid: string}} params

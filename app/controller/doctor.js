@@ -40,7 +40,7 @@ class DoctorController extends Controller {
       note,
     });
     this.ctx.body = {
-      success: data && data.affectedRows === 1,
+      success: data,
     };
   }
   /**
