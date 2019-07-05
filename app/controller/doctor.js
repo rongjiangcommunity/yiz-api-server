@@ -84,10 +84,10 @@ class DoctorController extends Controller {
   async rebook() {
     const {openid} = this.ctx.wxuser;
     const {bid} = this.ctx.params;
-    const {note} = this.ctx.request.body;
+    const {note, regDate} = this.ctx.request.body;
 
     const data = await this.service.doctor.updateMyBooking({
-      openid, bid, action: 'rebook', note,
+      openid, bid, action: 'rebook', note, regDate,
     });
     this.ctx.body = {
       success: data,
