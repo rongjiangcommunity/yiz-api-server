@@ -24,7 +24,8 @@ class DoctorService extends Service {
   async book(row) {
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
-    return await client.insert('doctor_booking', row);
+    const data = await client.insert('doctor_booking', row);
+    return data && data.affectedRows === 1;
   }
   /**
    * @param {{start?: number, end?: number, openid: string}} params
@@ -65,15 +66,18 @@ class DoctorService extends Service {
     return (await client.query(sql) || [])[0];
   }
   /**
-   * @param {{openid: string, bid: number, action: string, note?: string}} params
+   * @param {{openid: string, bid: number, action: string, note?: string, regDate?:string}} params
    */
   async updateMyBooking(params) {
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
-    const {openid, bid, action, note} = params;
+    const {openid, bid, action, note, regDate} = params;
     let setString = 'status = \'wait\'';
     if (note) {
       setString = `${setString},note='${note}'`;
+    }
+    if (regDate) {
+      setString = `${setString},regDate='${regDate}'`;
     }
     const cancelSql = `
       UPDATE doctor_booking SET status = 'cancel'

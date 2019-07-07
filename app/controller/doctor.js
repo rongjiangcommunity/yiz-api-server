@@ -39,18 +39,9 @@ class DoctorController extends Controller {
       reg_date: regDate,
       note,
     });
-    if (data && data.affectedRows === 1) {
-      this.ctx.body = {
-        data,
-        success: true,
-      };
-    } else {
-      // TODO: return error msg @jiewei.ljw
-      this.ctx.body = {
-        msg: '',
-        success: false,
-      };
-    }
+    this.ctx.body = {
+      success: data,
+    };
   }
   /**
    * GET /api/doctor/booking/:sid/:bid
@@ -93,10 +84,10 @@ class DoctorController extends Controller {
   async rebook() {
     const {openid} = this.ctx.wxuser;
     const {bid} = this.ctx.params;
-    const {note} = this.ctx.request.body;
+    const {note, regDate} = this.ctx.request.body;
 
     const data = await this.service.doctor.updateMyBooking({
-      openid, bid, action: 'rebook', note,
+      openid, bid, action: 'rebook', note, regDate,
     });
     this.ctx.body = {
       success: data,
