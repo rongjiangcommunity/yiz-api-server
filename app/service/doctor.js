@@ -159,6 +159,7 @@ class DoctorService extends Service {
       LEFT JOIN doctor as b
       ON drid = b.id
       ${conditions.length? 'WHERE ' +conditions.join(' AND '): ''}
+      ORDER BY create_time desc
       limit 32
     `;
     return await client.query(sql);
