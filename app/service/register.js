@@ -105,6 +105,35 @@ class RegisterService extends Service {
     return null;
   }
   /**
+   * @param {{appid: string, openid: string}} params
+   */
+  async reviewCount(params) {
+    // @ts-ignore
+    const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
+    const {openid, appid} = params;
+
+    const reviewer = await redis.hgetall(`${appid}:user:${openid}`);
+    const {CADMIN, GADMIN, ADMIN} = this.ctx.helper;
+    let key = '';
+    const typekey = 'apply_list';
+    if (reviewer.role === ADMIN) {
+      key = `${appid}:${typekey}:admin`;
+    } else if (reviewer.role === GADMIN) {
+      if (reviewer.period) {
+        key = `${appid}:${typekey}:${reviewer.period}`;
+      }
+    } else if (reviewer.role === CADMIN) {
+      if (reviewer.g3 && reviewer.period) {
+        key = `${appid}:${typekey}:${reviewer.period}-${reviewer.g3}`;
+      }
+    }
+    let count = 0;
+    if (key) {
+      count = await redis.zcard(key);
+    }
+    return count;
+  }
+  /**
    * @param {{appid: string, openid: string, start: number, stop: number}} params
    */
   async reviewHistory(params) {
