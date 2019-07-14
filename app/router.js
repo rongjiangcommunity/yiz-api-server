@@ -28,6 +28,8 @@ module.exports = app => {
   const reviweMiddlewares = [isWxLogin, checkRole(CADMIN), prereview];
   router.post('/api/user/apply/:sid', isWxLogin, c.register.applyFor);
   router.get('/api/user/apply/:sid', isWxLogin, c.register.applyInfo);
+
+  router.get('/api/user/reviewcount/:sid', isWxLogin, checkRole(CADMIN), c.register.reviewCount);
   router.get('/api/user/reviewlist/:sid', isWxLogin, checkRole(CADMIN), c.register.reviewList);
   router.get('/api/user/reviewhistory/:sid', isWxLogin, checkRole(CADMIN), c.register.reviewHistory);
   router.get('/api/user/review/:sid/:uid', ...reviweMiddlewares, c.register.reviewInfo);

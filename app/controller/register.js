@@ -46,7 +46,18 @@ class RegisterController extends Controller {
       data,
     };
   }
-
+  /**
+   * GET /api/user/reviewcount/:sid
+   * curl 127.0.0.1:7001/api/user/reviewcount/yiz:$sid
+   */
+  async reviewCount() {
+    const {appid, openid} = this.ctx.wxuser;
+    const data = await this.service.register.reviewCount({openid, appid});
+    this.ctx.body = {
+      success: true,
+      data,
+    };
+  }
   /**
    * GET /api/user/reviewlist/:sid
    * curl 127.0.0.1:7001/api/user/reviewlist/yiz:$sid
