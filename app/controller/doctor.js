@@ -99,7 +99,7 @@ class DoctorController extends Controller {
     const {note, regDate} = this.ctx.request.body;
 
     const data = await this.service.doctor.updateMyBooking({
-      openid, bid, action: 'rebook', note, regDate,
+      openid, bid, action: 'rebook', note, regDate: `${regDate}`.trim(),
     });
     this.ctx.body = {
       success: data,

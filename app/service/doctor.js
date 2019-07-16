@@ -89,7 +89,7 @@ class DoctorService extends Service {
       setString = `${setString},note='${note}'`;
     }
     if (regDate) {
-      setString = `${setString},regDate='${regDate}'`;
+      setString = `${setString},reg_date='${regDate}'`;
     }
     const cancelSql = `
       UPDATE doctor_booking SET status = 'cancel'
