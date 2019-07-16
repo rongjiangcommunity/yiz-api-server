@@ -32,11 +32,23 @@ class DoctorController extends Controller {
       };
       return;
     }
+    const rows = await this.service.doctor.queryBeforeBook({
+      uid: openid,
+      drid,
+      reg_date: `${regDate}`.trim(),
+    });
+    if (rows && rows.length) {
+      this.ctx.body = {
+        success: false,
+        mes: '同一天一个医生只能预约一次',
+      };
+      return;
+    }
     const data = await this.service.doctor.book({
       uid: openid,
       drid,
       status,
-      reg_date: regDate,
+      reg_date: `${regDate}`.trim(),
       note,
     });
     this.ctx.body = {

@@ -28,6 +28,18 @@ class DoctorService extends Service {
     return data && data.affectedRows === 1;
   }
   /**
+   * @param {{[key:string]: any}} params
+   */
+  async queryBeforeBook(params) {
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const data = await client.select('doctor_booking', {
+      limit: 10,
+      where: params,
+    });
+    return data;
+  }
+  /**
    * @param {{start?: number, end?: number, openid: string}} params
    */
   async myBookings(params) {
