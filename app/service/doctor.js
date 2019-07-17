@@ -8,7 +8,7 @@ class DoctorService extends Service {
   async doctors() {
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
-    const columns = ['hospital', 'speciality', 'id', 'title', 'detail', 'department', 'avatar', 'name', 'status', 'create_time'];
+    const columns = ['hospital', 'speciality', 'id', 'title', 'detail', 'department', 'avatar', 'name', 'status', 'create_time', 'moreinfo'];
     // const sql = `select ${columns.join(',')} from ?? limit ?`;
     // const data = await client.query(sql, ['doctor', 100]);
 
