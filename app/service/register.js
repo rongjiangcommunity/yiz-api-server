@@ -190,7 +190,7 @@ class RegisterService extends Service {
     const uidKey = `${appid}:user:${uid}`;
     const applyKey = `${appid}:apply:${uid}`;
     const status = approved ? OK : NOT_OK;
-    const {period, g3, name, mobile} = await redis.hgetall(applyKey);
+    const {period, g3, name, mobile, wechat} = await redis.hgetall(applyKey);
 
     /** @type {[string, any][]} */
     const data = [];
@@ -207,6 +207,8 @@ class RegisterService extends Service {
         reviewInfo.push('name', name);
         reviewInfo.push('g3', g3);
         reviewInfo.push('period', period);
+        reviewInfo.push('mobile', mobile);
+        reviewInfo.push('wechat', wechat);
         const info = presetAdmins && presetAdmins[`${period}-${mobile}`];
         if (info && info.role) {
           reviewInfo.push('role', info.role);
@@ -232,7 +234,7 @@ class RegisterService extends Service {
         this.ctx.logger.error(e);
         return false;
       });
-    this.ctx.logger.info('multi result', result);
+    // this.ctx.logger.info('multi result', result);
     if (result) {
       const applyData = await redis.hgetall(applyKey);
       await redis.hmset(`${applyKey}:${now}`, new Map(Object.entries(applyData)));

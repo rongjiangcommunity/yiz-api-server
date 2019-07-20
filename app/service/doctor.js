@@ -8,7 +8,7 @@ class DoctorService extends Service {
   async doctors() {
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
-    const columns = ['hospital', 'speciality', 'id', 'title', 'detail', 'department', 'avatar', 'name', 'status', 'create_time'];
+    const columns = ['hospital', 'speciality', 'id', 'title', 'detail', 'department', 'avatar', 'name', 'status', 'create_time', 'moreinfo'];
     // const sql = `select ${columns.join(',')} from ?? limit ?`;
     // const data = await client.query(sql, ['doctor', 100]);
 
@@ -26,6 +26,18 @@ class DoctorService extends Service {
     const client = await (this.app.mysql.get('yiz'));
     const data = await client.insert('doctor_booking', row);
     return data && data.affectedRows === 1;
+  }
+  /**
+   * @param {{[key:string]: any}} params
+   */
+  async queryBeforeBook(params) {
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const data = await client.select('doctor_booking', {
+      limit: 10,
+      where: params,
+    });
+    return data;
   }
   /**
    * @param {{start?: number, end?: number, openid: string}} params
@@ -77,7 +89,7 @@ class DoctorService extends Service {
       setString = `${setString},note='${note}'`;
     }
     if (regDate) {
-      setString = `${setString},regDate='${regDate}'`;
+      setString = `${setString},reg_date='${regDate}'`;
     }
     const cancelSql = `
       UPDATE doctor_booking SET status = 'cancel'
