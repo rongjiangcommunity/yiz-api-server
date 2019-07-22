@@ -176,7 +176,7 @@ class RegisterService extends Service {
    */
   async review(appid, openid, params) {
     const {OK, NOT_OK} = this.ctx.helper;
-    const presetAdmins = this.config.presetAdmins || {};
+    // const presetAdmins = this.config.presetAdmins || {};
     // @ts-ignore
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
     const now = Date.now();
@@ -209,10 +209,10 @@ class RegisterService extends Service {
         reviewInfo.push('period', period);
         reviewInfo.push('mobile', mobile);
         reviewInfo.push('wechat', wechat);
-        const info = presetAdmins && presetAdmins[`${period}-${mobile}`];
-        if (info && info.role) {
-          reviewInfo.push('role', info.role);
-        }
+        // const info = presetAdmins && presetAdmins[`${period}-${mobile}`];
+        // if (info && info.role) {
+        //   reviewInfo.push('role', info.role);
+        // }
       }
     }
     const applyListKey = `${appid}:apply_list:${period}-${g3}`;
