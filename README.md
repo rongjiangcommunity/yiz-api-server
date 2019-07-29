@@ -1,4 +1,4 @@
-# wechat-auth
+# yiz-api-server
 
 Auth server for wechat login
 
@@ -31,7 +31,7 @@ open http://localhost:7001/
 
 ```sh
 docker network create wechat-net
-docker pull jiewei/wechat-auth
+docker pull jiewei/yiz-api-server
 docker pull redis
 
 # redis
@@ -47,15 +47,15 @@ docker exec -it wechat-redis redis-cli -a $auth set app:authtoken $token
 
 # app
 docker run -d --network wechat-net \
--v /home/admin/wechat-auth:/home/admin/app \
--p:6001:7001 --name wechat-auth jiewei/wechat-auth
+-v /home/admin/yiz-api-server:/home/admin/app \
+-p:6001:7001 --name yiz-api-server jiewei/yiz-api-server
 ```
 
 #### docker build & upload
 
 ```sh
-docker build . -t jiewei/wechat-auth
-docker push jiewei/wechat-auth
+docker build . -t jiewei/yiz-api-server
+docker push jiewei/yiz-api-server
 ```
 
 ## nginx on centOS

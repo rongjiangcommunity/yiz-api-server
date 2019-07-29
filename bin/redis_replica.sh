@@ -1,38 +1,43 @@
 #!/bin/bash
 
 HOME=$(eval echo ~$user)
-TOOLS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+BIN_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-redis_dir=$HOME/data/wechat-redis
+MASTER_AUTH=
+MASTER_HOST='111.230.144.172'
+
+
+redis_dir=$HOME/data/yiz-redis
 mkdir -p $redis_dir
 
-# docker exec -it wechat-redis redis-cli
-# MASTER_AUTH=$password ./tools/redis_local_replica.sh
 # Help
 THIS="$(basename "$0")"
 usage() {
   cat <<!
-$TOOLS_DIR/${THIS} [options]
+$BIN_PATH/${THIS} [options]
 
-启动redis本地数据备份
+启动redis数据备份
 
 启动本地redis后，进入容器：docker exec -it wechat-redis redis-cli
 
 options:
-  -h  显示帮助信息
-  -p master auth
+  -i 显示帮助信息
+  -a auth of master
+  -h host of master
 !
 }
 
-while getopts "hp:" opt; do
+while getopts "ia:h:" opt; do
   case $opt in
-    h)
+    i)
       usage
       exit 0
       ;;
-    p)
+    a)
       MASTER_AUTH=$OPTARG
       ;;
+    h)
+      MASTER_HOST=$OPTARG
   esac
 done
 
@@ -52,4 +57,4 @@ else
 fi
 
 docker exec -it wechat-redis redis-cli config set masterauth $MASTER_AUTH
-docker exec -it wechat-redis redis-cli SLAVEOF 111.230.144.172 6379
+docker exec -it wechat-redis redis-cli SLAVEOF $MASTER_HOST 6379

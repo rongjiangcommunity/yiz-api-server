@@ -1,5 +1,5 @@
 {
-  "name": "wechat-auth",
+  "name": "yiz-api-server",
   "version": "1.0.0",
   "description": "server for wechat login",
   "private": true,
@@ -30,8 +30,8 @@
     "node": ">=8.9.0"
   },
   "scripts": {
-    "start": "egg-scripts start --title=egg-server-wechat-auth",
-    "stop": "egg-scripts stop --title=egg-server-wechat-auth",
+    "start": "egg-scripts start --title=egg-server-yiz-api-server",
+    "stop": "egg-scripts stop --title=egg-server-yiz-api-server",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",

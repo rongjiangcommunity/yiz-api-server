@@ -13,7 +13,7 @@ WORKDIR /home/admin/app
 
 COPY . /home/admin/app
 
-# RUN chmod +x /home/admin/wechat-auth/*.sh
+# RUN chmod +x /home/admin/yiz-api-server/*.sh
 RUN npm install --production
 
 CMD [ "npm", "run", "start" ]
