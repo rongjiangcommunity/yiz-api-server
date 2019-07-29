@@ -5,17 +5,28 @@ const Controller = require('egg').Controller;
 /**
  * 个人信息
  * 认证信息：name,period,g3
- * 手机：countryCode, phoneNumber
- * 联系方式：wechat,email,mobile
- * 地区、地址：region,address [country,province,city]
- * 教育经历：education=[{what,where,when}]
+ * 联系方式：countryCode, phoneNumber, wechat,email,mobile
+ * origin 籍贯，workingArea 工作区域，livingArea 生活区
+ * isPhd 是否博士，selfEmployed 是否自主创业
+ * 教育经历：education=[{what,where,when,major}]
  * 工作经历：experience=[{what,where,when}]
  * 感情状况：personalStatus 0,1,2 ['单身', '恋爱中', '已婚']
  * 性别：gender [male, femal]
+ * country,province,city
+ * region 地区, address 地址
  * 其他：wxinfo
  */
-// eslint-disable-next-line max-len
-const userFileds = 'countryCode,phoneNumber,wechat,personalStatus,email,mobile,region,address,country,province,city,gender,wxinfo,education,experience';
+const userFileds = [
+  'countryCode', 'phoneNumber',
+  'wechat', 'email', 'mobile',
+  'gender', 'personalStatus',
+  // https://www.yuque.com/oqh30u/topics/32
+  'origin', 'workingArea', 'livingArea', 'isPhd', 'selfEmployed',
+  'education', 'experience',
+  'country', 'province', 'city',
+  'region', 'address',
+  'wxinfo',
+];
 
 class UserController extends Controller {
   /**

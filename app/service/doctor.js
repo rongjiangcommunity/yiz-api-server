@@ -101,7 +101,7 @@ class DoctorService extends Service {
       UPDATE doctor_booking SET ${setString}
       WHERE id = ${bid}
       AND uid = '${openid}'
-      AND status in ('failed', 'cancel')
+      AND status in ('failed', 'cancel', 'wait')
     `;
     const sql = action === 'rebook' ? rebookSql :
       action === 'cancel' ? cancelSql : '';
