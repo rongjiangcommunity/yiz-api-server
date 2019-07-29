@@ -30,12 +30,12 @@ open http://localhost:7001/
 #### server start
 
 ```sh
-docker network create wechat-net
+docker network create my-net
 docker pull jiewei/yiz-api-server
 docker pull redis
 
 # redis
-docker run -d --network wechat-net \
+docker run -d --network my-net \
 -v /home/admin/data/wechat-redis:/data \
 -v /home/admin/conf/redis/redis.conf:/usr/local/etc/redis/redis.conf \
 -p:6379:6379 --name wechat-redis redis \
@@ -46,7 +46,7 @@ docker exec -it wechat-redis redis-cli -a $auth HMSET app:yiz:config appid $appi
 docker exec -it wechat-redis redis-cli -a $auth set app:authtoken $token
 
 # app
-docker run -d --network wechat-net \
+docker run -d --network my-net \
 -v /home/admin/yiz-api-server:/home/admin/app \
 -p:6001:7001 --name yiz-api-server jiewei/yiz-api-server
 ```
