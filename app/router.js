@@ -49,4 +49,6 @@ module.exports = app => {
 
   router.get('/api/query/hgetall/:pattern', authtoken, c.home.phgetall);
   router.get('/api/query/get/:pattern', authtoken, c.home.pget);
+  router.get('/api/query/zrange/:pattern', authtoken, c.home.zrange);
+  router.get('/api/query/lrange/:pattern', authtoken, c.home.lrange);
 };
