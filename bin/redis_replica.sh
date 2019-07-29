@@ -41,16 +41,16 @@ while getopts "ia:h:" opt; do
   esac
 done
 
-if docker network ls | grep wechat-net > /dev/null 2>&1;then
-  echo '[INFO] wechat-net existed'
+if docker network ls | grep my-net > /dev/null 2>&1;then
+  echo '[INFO] my-net existed'
 else
-  docker network create wechat-net
+  docker network create my-net
 fi
 
 if docker ps -f 'name=redis' | grep wechat-redis > /dev/null 2>&1; then
   echo 'wechat-redis existed'
 else
-  docker run -d -it --network wechat-net \
+  docker run -d -it --network my-net \
   -v $redis_dir:/data \
   --name wechat-redis redis redis-server \
   --appendonly yes
