@@ -14,7 +14,7 @@ module.exports = appInfo => {
     clients: {
       redis: {
         port: 6379,
-        host: 'wechat-redis',
+        host: 'yiz-redis',
         password: '',
         db: 0,
       },
@@ -23,7 +23,7 @@ module.exports = appInfo => {
   exports.mysql = {
     clients: {
       yiz: {
-        host: 'wechat-mysql',
+        host: 'mysql',
         port: '3306',
         user: 'yizhong',
         password: '$password',
