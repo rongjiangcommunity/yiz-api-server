@@ -18,7 +18,7 @@ $BIN_PATH/${THIS} [options]
 
 启动redis数据备份
 
-启动本地redis后，进入容器：docker exec -it wechat-redis redis-cli
+启动本地redis后，进入容器：docker exec -it redis-replica redis-cli
 
 options:
   -i 显示帮助信息
@@ -47,14 +47,14 @@ else
   docker network create my-net
 fi
 
-if docker ps -f 'name=redis' | grep wechat-redis > /dev/null 2>&1; then
-  echo 'wechat-redis existed'
+if docker ps -f 'name=redis' | grep redis-replica > /dev/null 2>&1; then
+  echo 'redis-replica existed'
 else
   docker run -d -it --network my-net \
   -v $redis_dir:/data \
-  --name wechat-redis redis redis-server \
+  --name redis-replica redis redis-server \
   --appendonly yes
 fi
 
-docker exec -it wechat-redis redis-cli config set masterauth $MASTER_AUTH
-docker exec -it wechat-redis redis-cli SLAVEOF $MASTER_HOST 6379
+docker exec -it redis-replica redis-cli config set masterauth $MASTER_AUTH
+docker exec -it redis-replica redis-cli SLAVEOF $MASTER_HOST 6379
