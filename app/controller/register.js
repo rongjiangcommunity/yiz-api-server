@@ -104,6 +104,9 @@ class RegisterController extends Controller {
    * curl -X POST 127.0.0.1:7001/api/user/review/yiz:$sid/o-YIv5TyMkOjeXljbwY6CqScAdq4 -H 'Content-Type: application/json' -d '{"comment":"优秀", "approved":true}'
    */
   async review() {
+    // @ts-ignore
+    const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
+
     const {appid, openid} = this.ctx.wxuser;
     const {uid} = this.ctx.params;
     const {comment, approved} = this.ctx.request.body;
@@ -112,6 +115,35 @@ class RegisterController extends Controller {
       approved,
       uid,
     });
+
+    const formId = await this.ctx.helper.getFormId(appid, uid);
+    let page ='pages/index/index';
+
+    if (formId) {
+      const titles = {
+        notok: '认证失败',
+        ok: '认证成功',
+      };
+      const applyKey = `${appid}:apply:${uid}`;
+      const {name, period, g3} = await redis.hgetall(applyKey);
+      const accesstoken = await this.service.wechat.accessToken({appid});
+      const displayName = `${period}-${g3} ${name}`;
+
+      let msg = [];
+      if (approved) {
+        msg = [titles.ok, '请前往完善个人信息', new Date().toUTCString(), displayName];
+      } else {
+        msg = [titles.notok, '请重新提交信息', new Date().toUTCString(), displayName];
+        page = 'pages/register/register';
+      }
+      this.service.wechat.authNotify({
+        access_token: accesstoken.access_token,
+        openid: uid,
+        formId,
+        page,
+      }, msg);
+    }
+
     this.ctx.body = {
       success: result,
     };

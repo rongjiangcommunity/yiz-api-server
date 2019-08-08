@@ -18,6 +18,13 @@ module.exports = () => {
       return;
     }
     ctx.wxuser = {...wxinfo, appid};
+
+    const {openid} = wxinfo;
+    const {formId} = ctx.request.body;
+
+    if (formId && openid) {
+      ctx.helper.saveFormId(appid, openid, formId);
+    }
     await next();
   };
 };
