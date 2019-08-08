@@ -36,14 +36,15 @@ docker pull redis
 
 # redis
 docker run -d --network my-net \
--v /home/admin/data/wechat-redis:/data \
+-v /home/admin/data/yiz-redis:/data \
 -v /home/admin/conf/redis/redis.conf:/usr/local/etc/redis/redis.conf \
--p:6379:6379 --name wechat-redis redis \
+-p:6379:6379 --name yiz-redis redis \
 redis-server /usr/local/etc/redis/redis.conf --appendonly yes
 
+
 # config app
-docker exec -it wechat-redis redis-cli -a $auth HMSET app:yiz:config appid $appid secret $serect sessionExSeconds 86400
-docker exec -it wechat-redis redis-cli -a $auth set app:authtoken $token
+docker exec -it yiz-redis redis-cli -a $auth HMSET app:yiz:config appid $appid secret $serect sessionExSeconds 86400
+docker exec -it yiz-redis redis-cli -a $auth set app:authtoken $token
 
 # app
 docker run -d --network my-net \
@@ -87,7 +88,7 @@ redis-cli -p 6380  --eval pget.lua 0 , app:*
 ## backup
 
 ```sh
-docker cp wechat-redis:/data /home/admin/data/redis/`date +"%Y%m%d_%H%M%S"`
+docker cp yiz-redis:/data /home/admin/data/redis/`date +"%Y%m%d_%H%M%S"`
 ```
 
 [egg]: https://eggjs.org
