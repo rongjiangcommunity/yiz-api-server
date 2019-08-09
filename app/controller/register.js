@@ -128,12 +128,13 @@ class RegisterController extends Controller {
       const {name, period, g3} = await redis.hgetall(applyKey);
       const accesstoken = await this.service.wechat.accessToken({appid});
       const displayName = `${period}-${g3} ${name}`;
+      const date = new Date().toLocaleString('cn', {timeZone: 'Asia/Shanghai'});
 
       let msg = [];
       if (approved) {
-        msg = [titles.ok, '请前往完善个人信息', new Date().toUTCString(), displayName];
+        msg = [titles.ok, '请前往完善个人信息', date, displayName];
       } else {
-        msg = [titles.notok, '请重新提交信息', new Date().toUTCString(), displayName];
+        msg = [titles.notok, '请重新提交信息', date, displayName];
         page = 'pages/register/register';
       }
       this.service.wechat.authNotify({

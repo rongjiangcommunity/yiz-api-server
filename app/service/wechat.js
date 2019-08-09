@@ -143,7 +143,7 @@ class WechatService extends Service {
       contentType: 'json',
       data: body,
     });
-    this.ctx.logger.info('review result', result && result.data);
+    this.ctx.logger.info('template_messaging', result && result.data);
     return result && result.data && result.data.errcode===0;
   }
 }
