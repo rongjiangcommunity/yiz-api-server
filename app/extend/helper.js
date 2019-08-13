@@ -38,3 +38,51 @@ exports.PENDING = PENDING;
 exports.statusEnum = [OK, NOT_OK, PENDING];
 
 exports.bookingStatusEnum = ['wait', 'active', 'completed', 'failed', 'cancel'];
+
+/**
+ * @param {string} appid
+ * @param {string} openid
+ * @param {string} formId
+ */
+exports.saveFormId = async function(appid, openid, formId) {
+  if (!formId || formId.indexOf('mock')>=0) {
+    return;
+  }
+  // @ts-ignore
+  const redis = /** @type {MyTypes.Redis} */(this.ctx.app.redis.get('redis'));
+  const key = `${appid}:form_ids:${openid}`;
+  // @ts-ignore
+  await redis.zadd(key, Date.now(), formId);
+
+  // @ts-ignore
+  this.ctx.logger.info('formId.save', appid, openid, formId);
+};
+/**
+ * @param {string} appid
+ * @param {string} openid
+ */
+exports.getFormId = async function(appid, openid) {
+  // @ts-ignore
+  const redis = /** @type {MyTypes.Redis} */(this.ctx.app.redis.get('redis'));
+  // 7days
+  const senvenDaysInSeconds = 7*24*60*60;
+  // 10min
+  const THRESHOLD = 10*60;
+
+  const key = `${appid}:form_ids:${openid}`;
+  // zpopmin: Available since 5.0.0.
+  // @ts-ignore
+  let [formId, ts] = await redis.zpopmin(key);
+  ts = Number(ts);
+  while (formId) {
+    if (ts+senvenDaysInSeconds*1000-THRESHOLD*1000 > Date.now()) {
+      break;
+    }
+    // @ts-ignore
+    [formId, ts] = await redis.zpopmin(key);
+  }
+  // @ts-ignore
+  this.ctx.logger.info('formId.get', appid, openid, formId);
+
+  return formId;
+};
