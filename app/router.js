@@ -22,7 +22,7 @@ module.exports = app => {
   router.post('/api/wechat/:sid/decrypt', isWxLogin, c.wechat.decrypt);
 
   router.get('/api/user/:sid', isWxLogin, c.user.info);
-  router.post('/api/user/:sid', isWxLogin, c.user.save);
+  router.post('/api/user/:sid', isWxLogin, c.user.update);
   router.post('/api/user/feedback/:sid', isWxLogin, c.user.feedback);
 
   const reviweMiddlewares = [isWxLogin, checkRole(CADMIN), prereview];

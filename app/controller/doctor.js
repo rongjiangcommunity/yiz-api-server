@@ -145,7 +145,7 @@ class DoctorController extends Controller {
       bid,
     });
     if (data && data.uid) {
-      const info = await this.service.user.query(appid, data.uid);
+      const info = await this.service.user.query({appid, openid: data.uid});
       if (info) {
         data.user = {
           uid: data.uid,
@@ -179,10 +179,11 @@ class DoctorController extends Controller {
     if (data && data.length) {
       // @ts-ignore
       const ids = data.map(d => d.uid);
-      const users = await this.service.user.batchQuery(appid, ids);
+      const users = await this.service.user.batchQuery({appid, openids: ids});
+
       // @ts-ignore
       const map = users.reduce((pre, cur) => {
-        pre[cur.id] = cur;
+        pre[cur.wechatOpenid] = cur;
         return pre;
       }, {});
       // @ts-ignore
@@ -227,7 +228,7 @@ class DoctorController extends Controller {
 }
 
 /**
- * @param {{ g3: any; period: any; name: any; phoneNumber: any; wechat: any; approved: any; }} info
+ * @param {{ g3: any; period: any; name: any; phoneNumber: any; wechat: any; approved: any; mobile: string}} info
  */
 function getUserinfo(info) {
   if (!info) {
@@ -240,6 +241,7 @@ function getUserinfo(info) {
     phoneNumber: info.phoneNumber,
     wechat: info.wechat,
     approved: info.approved,
+    mobile: info.mobile,
   };
 }
 

@@ -77,7 +77,7 @@ class RegisterService extends Service {
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
     const {start, stop, openid, appid} = params;
 
-    const reviewer = await redis.hgetall(`${appid}:user:${openid}`);
+    const reviewer = await this.ctx.service.user.query({openid, appid});
     const {CADMIN, GADMIN, ADMIN} = this.ctx.helper;
     let key = '';
     const typekey = 'apply_list';
@@ -112,7 +112,7 @@ class RegisterService extends Service {
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
     const {openid, appid} = params;
 
-    const reviewer = await redis.hgetall(`${appid}:user:${openid}`);
+    const reviewer = await this.ctx.service.user.query({openid, appid});
     const {CADMIN, GADMIN, ADMIN} = this.ctx.helper;
     let key = '';
     const typekey = 'apply_list';
@@ -141,7 +141,7 @@ class RegisterService extends Service {
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
     const {start, stop, openid, appid} = params;
 
-    const reviewer = await redis.hgetall(`${appid}:user:${openid}`);
+    const reviewer = await this.ctx.service.user.query({openid, appid});
     const {CADMIN, GADMIN, ADMIN} = this.ctx.helper;
     let key = '';
     const typekey = 'reviewed_list';
@@ -183,11 +183,10 @@ class RegisterService extends Service {
     // uid,openid
     const {comment, approved, uid} = params;
 
-    const reviewer = await redis.hgetall(`${appid}:user:${openid}`);
+    const reviewer = await this.ctx.service.user.query({openid, appid});
     const reviewerName = reviewer && reviewer.g3 && reviewer.period ?
       `${reviewer.period}-${reviewer.g3} ${reviewer.name}` : '';
 
-    const uidKey = `${appid}:user:${uid}`;
     const applyKey = `${appid}:apply:${uid}`;
     const status = approved ? OK : NOT_OK;
     const {period, g3, name, mobile, wechat} = await redis.hgetall(applyKey);
@@ -200,20 +199,17 @@ class RegisterService extends Service {
     data.push(['approved_by', openid]); // 88-10-ljw
     data.push(['approved_by_name', reviewerName]);
 
-    const reviewInfo = ['approved', approved];
     // change name,g3,period
-    if (approved) {
-      if (g3 && period) {
-        reviewInfo.push('name', name);
-        reviewInfo.push('g3', g3);
-        reviewInfo.push('period', period);
-        reviewInfo.push('mobile', mobile);
-        reviewInfo.push('wechat', wechat);
-        // const info = presetAdmins && presetAdmins[`${period}-${mobile}`];
-        // if (info && info.role) {
-        //   reviewInfo.push('role', info.role);
-        // }
-      }
+    if (approved && g3 && period) {
+      const row = {
+        name,
+        g3,
+        period,
+        mobile,
+        wechat,
+        approved,
+      };
+      await this.ctx.service.user.save({row, openid});
     }
     const applyListKey = `${appid}:apply_list:${period}-${g3}`;
     const gadminApplyListKey = `${appid}:apply_list:${period}`;
@@ -223,7 +219,6 @@ class RegisterService extends Service {
     const allReviewedKey = `${appid}:reviewed_list:admin`;
 
     const result = await redis.multi().hmset(applyKey, new Map(data))
-      .hmset(uidKey, ...reviewInfo)
       .zrem(applyListKey, uid)
       .zrem(gadminApplyListKey, uid)
       .zrem(allApplyListKey, uid)

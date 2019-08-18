@@ -18,14 +18,6 @@ class RegisterController extends Controller {
       };
       return;
     }
-    // const userinfo = await this.service.user.query(appid, openid);
-    // if (userinfo.approved === 'true') {
-    //   this.ctx.body = {
-    //     success: false,
-    //     msg: 'You are already a xiaoyou.',
-    //   };
-    //   return;
-    // }
     const result = await this.service.register.applyFor(appid, openid, {
       name, period, g3, wechat, mobile, classmates, message, g2, g1, gender,
     });
