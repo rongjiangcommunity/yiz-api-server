@@ -209,7 +209,7 @@ class RegisterService extends Service {
         wechat,
         approved,
       };
-      await this.ctx.service.user.save({row, openid});
+      await this.ctx.service.user.save({row, openid: uid});
     }
     const applyListKey = `${appid}:apply_list:${period}-${g3}`;
     const gadminApplyListKey = `${appid}:apply_list:${period}`;
