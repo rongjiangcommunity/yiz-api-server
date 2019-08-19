@@ -65,8 +65,12 @@ class UserController extends Controller {
       pre[k] = v;
       return pre;
     }, {});
-    // this.logger.info('row', row);
-    const result = await this.service.user.update({openid, row});
+    let result = false;
+    if (Object.keys(row).length===0) {
+      result = true;
+    } else {
+      result = await this.service.user.update({openid, row});
+    }
     this.ctx.body = {
       success: result,
     };
