@@ -67,6 +67,9 @@ class UserService extends Service {
    * @param {{row:object, appid?:string, openid: string}} param
    */
   async update({row, openid}) {
+    if (Object.keys(row).length===0) {
+      return 1;
+    }
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
     const newRow = boolStringValues(tranformKeys(row, decamelize));
