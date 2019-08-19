@@ -189,7 +189,7 @@ class RegisterService extends Service {
 
     const applyKey = `${appid}:apply:${uid}`;
     const status = approved ? OK : NOT_OK;
-    const {period, g3, name, mobile, wechat} = await redis.hgetall(applyKey);
+    const {period, g3, name, mobile, wechat, gender} = await redis.hgetall(applyKey);
 
     /** @type {[string, any][]} */
     const data = [];
@@ -208,6 +208,7 @@ class RegisterService extends Service {
         mobile,
         wechat,
         approved,
+        gender,
       };
       await this.ctx.service.user.save({row, openid: uid});
     }
