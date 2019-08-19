@@ -23,9 +23,9 @@ const userFileds = [
   // https://www.yuque.com/oqh30u/topics/32
   'origin', 'workingArea', 'livingArea', 'isPhd', 'selfEmployed',
   'education', 'experience',
-  'country', 'province', 'city',
-  'region', 'address',
-  'wxinfo',
+  // 'country', 'province', 'city',
+  // 'region', 'address',
+  // 'wxinfo',
 ];
 
 class UserController extends Controller {
@@ -35,7 +35,7 @@ class UserController extends Controller {
    */
   async info() {
     const {appid, openid} = this.ctx.wxuser;
-    const info = await this.service.user.query(appid, openid);
+    const info = await this.service.user.query({appid, openid});
     this.ctx.body = {
       data: info,
       success: true,
@@ -45,11 +45,13 @@ class UserController extends Controller {
    * POST /api/user/:sid
    * curl -X POST 127.0.0.1:7001/api/user/yiz:$sid  -H 'Content-Type: application/json' -d '{"name":"ljw", "gender":"male"}'
    */
-  async save() {
+  async update() {
     const {appid, openid} = this.ctx.wxuser;
     const params = this.ctx.request.body;
+    if (params.wxinfo) {
+      await this.service.user.saveWxinfo({wxinfo: params.wxinfo, appid, openid});
+    }
 
-    // const info = await this.service.user.query(appid, openid);
     const data = Object.entries(params).filter(([k, v]) => {
       return (userFileds.indexOf(k)>=0 && v);
     }).map( ([k, v]) => {
@@ -58,11 +60,15 @@ class UserController extends Controller {
       }
       return [k, v];
     });
-    // this.logger.info('data', data);
-    const result = await this.service.user.save(appid, openid, data);
+    const row = data.reduce((pre, [k, v]) => {
+      // @ts-ignore
+      pre[k] = v;
+      return pre;
+    }, {});
+    // this.logger.info('row', row);
+    const result = await this.service.user.update({openid, row});
     this.ctx.body = {
-      data: result,
-      success: true,
+      success: result,
     };
   }
   /**

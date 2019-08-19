@@ -101,6 +101,7 @@ class WechatService extends Service {
     return result && result.data || '';
   }
   /**
+   * https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/template-message.html
    * @param {{access_token: string, openid: string, formId: string, page: string}} params0
    * @param {['ok'|'notok',string, string, string]} param1
    */

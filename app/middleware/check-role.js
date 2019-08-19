@@ -22,7 +22,7 @@ module.exports = (role) => {
       };
       return;
     }
-    const user = await redis.hgetall(`${appid}:user:${openid}`);
+    const user = await ctx.service.user.query({appid, openid});
     if (!user) {
       ctx.status = 403;
       return;

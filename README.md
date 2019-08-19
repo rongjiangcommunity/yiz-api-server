@@ -92,6 +92,3 @@ docker cp yiz-redis:/data /home/admin/data/redis/`date +"%Y%m%d_%H%M%S"`
 ```
 
 [egg]: https://eggjs.org
-
-
-
