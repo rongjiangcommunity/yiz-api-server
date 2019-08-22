@@ -219,10 +219,20 @@ class LawyerController extends Controller {
       this.ctx.status = 403;
       return;
     }
+    const users = await this.service.lawyer.queryUserInfo([meta.fromUid, meta.toUid]) || [];
     const data = await this.service.lawyer.queryMsg({pid, offset, count});
     this.ctx.body = {
       success: true,
-      data,
+      data: {
+        user: {
+          // @ts-ignore
+          [meta.fromUid]: users.find(u => u.id === meta.fromUid),
+          // @ts-ignore
+          [meta.toUid]: users.find(u => u.id === meta.toUid),
+        },
+        top: meta,
+        list: data,
+      },
     };
   }
   /**

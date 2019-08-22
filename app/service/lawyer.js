@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 'use strict';
 
 const Service = require('egg').Service;
@@ -16,9 +17,12 @@ class LawyerService extends Service {
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
     const camelcaseKeys = this.ctx.helper.camelcaseKeys;
-    const data = await client.select('lawyer', {
-      limit: 100,
-    });
+    const sql = `
+      select lawyer.id,lawyer.uid,lawyer.avatar,name,period,g3 from lawyer join user
+      on lawyer.uid = user.id
+      limit 128;
+    `;
+    const data = await client.query(sql);
     if (data && data.length) {
       return data.map(camelcaseKeys);
     }
@@ -124,7 +128,7 @@ class LawyerService extends Service {
       orders: [['gmt_create', 'desc']],
       limit: 10,
     });
-    this.ctx.logger.info('messages', messages);
+    // this.ctx.logger.info('messages', messages);
 
     if (messages) {
       const message = messages[0];
@@ -142,18 +146,26 @@ class LawyerService extends Service {
   async consultings({offset, count, type, uid, consultingMe}) {
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
+    const camelcaseKeys = this.ctx.helper.camelcaseKeys;
 
     const {msgUndoneStatusEnum, msgDoneStatusEnum} = this.ctx.helper;
     const statuses = type === 'done' ? msgDoneStatusEnum : msgUndoneStatusEnum;
     const uidKey = consultingMe ? 'to_uid' : 'from_uid';
-
-    const sql = `select * from lawyer_msg_meta
-      where ${uidKey} = ? and status in ('${statuses.join('\',\'')}')
+    // UNIX_TIMESTAMP(a.gmt_create) as create_time
+    const sql = `select a.*,
+      b.name as user_name,b.period as user_period,b.g3 as user_g3,b.phone_number as user_phone,b.mobile as user_mobile,b.wechat as user_wechat
+      from lawyer_msg_meta a
+      left join user b
+      on b.id=a.${uidKey}
+      where a.${uidKey} = ? and a.status in ('${statuses.join('\',\'')}')
       order by gmt_create desc
       LIMIT ${offset},${count}
       `;
     const data = await client.query(sql, [uid]);
-    return data;
+    if (data && data.length) {
+      return data.map(camelcaseKeys);
+    }
+    return null;
   }
 
   /**
@@ -162,6 +174,7 @@ class LawyerService extends Service {
   async queryMsg({offset, count, pid}) {
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
+    const camelcaseKeys = this.ctx.helper.camelcaseKeys;
 
     const sql = `select * from lawyer_msg
       where pid = ?
@@ -169,7 +182,10 @@ class LawyerService extends Service {
       LIMIT ${offset},${count}
       `;
     const data = await client.query(sql, [pid]);
-    return data;
+    if (data && data.length) {
+      return data.map(camelcaseKeys);
+    }
+    return null;
   }
   /**
    * @param {number} id
@@ -192,6 +208,19 @@ class LawyerService extends Service {
     const result = await client.query(sql, [openid]);
     return result ? true : false;
   }
+  /**
+   * @param {number[]} ids
+   */
+  async queryUserInfo(ids) {
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const camelcaseKeys = this.ctx.helper.camelcaseKeys;
+    const sql = `select id,name,period,g3,phone_number,mobile,wechat from user where id in(${ids.join(',')})`;
+    const data = await client.query(sql);
+    if (data && data.length) {
+      return data.map(camelcaseKeys);
+    }
+    return [];
+  }
 }
-
 module.exports = LawyerService;
