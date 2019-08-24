@@ -56,6 +56,7 @@ module.exports = app => {
   router.get('/api/lawyer/my_consulting/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.myConsulting);
   router.get('/api/lawyer/msg/:sid/:pid', isWxLogin, checkRole(XIAOYOU), c.lawyer.queryMsg);
   router.get('/api/lawyer/is_lawyer/:sid', isWxLogin, c.lawyer.isLawyer);
+  router.get('/api/lawyer/has_unread/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.hasUnread);
 
   router.get('/api/query/hgetall/:pattern', authtoken, c.home.phgetall);
   router.get('/api/query/get/:pattern', authtoken, c.home.pget);

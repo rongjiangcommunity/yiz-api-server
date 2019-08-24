@@ -60,7 +60,7 @@ class LawyerController extends Controller {
     const user = this.ctx.user;
     const {fromUid, toUid, msg, pid} = this.ctx.request.body;
 
-    if (user && user.id !== fromUid) {
+    if (!user || user.id !== fromUid) {
       this.ctx.status = 403;
       return;
     }
@@ -247,6 +247,24 @@ class LawyerController extends Controller {
       return;
     }
     const result = await this.service.lawyer.isLawyerByOpenid(openid);
+    this.ctx.body = {
+      success: true,
+      data: result,
+    };
+  }
+  /**
+   * GET /api/lawyer/has_unread/:sid
+   * 是否有未读留言
+   * curl 127.0.0.1:7001/api/lawyer/has_unread/:sid
+   */
+  async hasUnread() {
+    const user = this.ctx.user;
+
+    if (!user) {
+      this.ctx.status = 403;
+      return;
+    }
+    const result = await this.service.lawyer.hasUnread({uid: user.id});
     this.ctx.body = {
       success: true,
       data: result,

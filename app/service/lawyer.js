@@ -163,11 +163,69 @@ class LawyerService extends Service {
       `;
     const data = await client.query(sql, [uid]);
     if (data && data.length) {
-      return data.map(camelcaseKeys);
+      // @ts-ignore
+      const items = await Promise.all(data.map(async item => {
+        if (type === 'done') {
+          return {
+            ...item,
+            hasUnread: false,
+          };
+        }
+        const hasUnread = await this.msgHasUnread({pid: item.id, uid});
+        return {
+          ...item,
+          hasUnread,
+        };
+      }));
+      return items.map(camelcaseKeys);
     }
     return null;
   }
-
+  /**
+   * 留言下是否有未读消息
+   * @param {{pid: number, uid: number}} param0
+   */
+  async msgHasUnread({pid, uid}) {
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const sql = `select * from lawyer_msg where pid=? and to_uid=? order by gmt_create desc limit 0,1`;
+    const data = await client.query(sql, [pid, uid]);
+    if (data && data.length) {
+      return data[0].read === 0;
+    }
+    return false;
+  }
+  /**
+   * 是否有未读消息
+   * @param {{uid: number}} param0
+   */
+  async hasUnread({uid}) {
+    const result = await this.hasCreatedMsg({uid});
+    if (result) {
+      return result;
+    }
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const sql = `select * from lawyer_msg where to_uid=? order by gmt_create desc limit 0,1`;
+    const data = await client.query(sql, [uid]);
+    if (data && data.length) {
+      return data[0].read === 0;
+    }
+    return false;
+  }
+  /**
+   * @param {{uid: number}} param0
+   */
+  async hasCreatedMsg({uid}) {
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const sql = `select * from lawyer_msg_meta where to_uid=? and status='created' order by gmt_create desc limit 0,1`;
+    const data = await client.query(sql, [uid]);
+    if (data && data.length) {
+      return true;
+    }
+    return false;
+  }
   /**
    * @param {{offset: number, count: number, pid: number}} param0
    */
@@ -221,6 +279,18 @@ class LawyerService extends Service {
       return data.map(camelcaseKeys);
     }
     return [];
+  }
+
+  async stat() {
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const sql =`
+      SELECT to_uid, b.name, b.period, b.g3, status, COUNT(*) as cnt
+      from yiz.lawyer_msg_meta a
+      JOIN yiz.user b
+      on a.to_uid=b.id
+      GROUP BY to_uid,status`;
+    return await client.query(sql);
   }
 }
 module.exports = LawyerService;
