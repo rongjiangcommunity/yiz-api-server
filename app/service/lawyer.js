@@ -130,7 +130,7 @@ class LawyerService extends Service {
     });
     // this.ctx.logger.info('messages', messages);
 
-    if (messages) {
+    if (messages && messages.length) {
       const message = messages[0];
       const result = await client.update('lawyer_msg', {
         id: message.id,
@@ -289,7 +289,9 @@ class LawyerService extends Service {
       from yiz.lawyer_msg_meta a
       JOIN yiz.user b
       on a.to_uid=b.id
-      GROUP BY to_uid,status`;
+      GROUP BY to_uid,status
+      order by to_uid
+      `;
     return await client.query(sql);
   }
 }
