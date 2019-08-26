@@ -196,6 +196,11 @@ class LawyerController extends Controller {
   /**
    * GET /api/lawyer/msg/:sid/:pid
    * 获取消息列表
+   * 状态说明
+   * 咨询中: created|active
+   * 已完成: closed|finished
+   * 超时关闭: timeout
+   *
    * curl 127.0.0.1:7001/api/lawyer/msg/:sid/1
    */
   async queryMsg() {
@@ -265,6 +270,35 @@ class LawyerController extends Controller {
       return;
     }
     const result = await this.service.lawyer.hasUnread({uid: user.id});
+    this.ctx.body = {
+      success: true,
+      data: result,
+    };
+  }
+  /**
+   * GET /api/lawyer/msg/delay/:sid
+   * 是否有超时留言，默认24小时律师未回复
+   * 参数
+   * hours: 超时时间，按小时， 默认 24
+   * offset: 指定起始位置下标
+   * count: 指定返回数量
+   *
+   * curl 127.0.0.1:7001/api/lawyer/msg/delay/:sid?hours=24&offset=0&count=32
+   */
+  async queryDelay() {
+    let {offset, count, hours} = this.ctx.query;
+
+    offset = posiveNumber(offset) ? Number(offset) : 0;
+    count = posiveNumber(count) ? Number(count) : 100;
+    hours = posiveNumber(hours) ? Number(hours) : 24;
+    const result = await this.service.lawyer.queryDelay({offset, count, hours});
+    this.ctx.body = {
+      success: true,
+      data: result,
+    };
+  }
+  async stat() {
+    const result = await this.service.lawyer.stat();
     this.ctx.body = {
       success: true,
       data: result,

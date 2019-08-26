@@ -280,7 +280,50 @@ class LawyerService extends Service {
     }
     return [];
   }
+  /**
+   * @param {{offset: number, count: number, hours: number}} param0
+   */
+  async queryDelay({hours, offset, count}) {
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const camelcaseKeys = this.ctx.helper.camelcaseKeys;
+    const status = 'created';
+    const delay = hours*60*60;
 
+    const sql = `
+      select a.*,
+      b.id as lawyer_id,b.name as lawyer_name,b.period as lawyer_period,b.g3 as lawyer_g3,b.phone_number as lawyer_phone,b.mobile as lawyer_mobile,b.wechat as lawyer_wechat,
+      c.id as user_id,c.name as user_name,c.period as user_period,c.g3 as user_g3,c.phone_number as user_phone,c.mobile as user_mobile,c.wechat as user_wechat
+      from lawyer_msg_meta a
+      left join user b on a.to_uid=b.id
+      left join user c on a.from_uid=c.id
+      where a.status='${status}' and (UNIX_TIMESTAMP(a.gmt_create)+${delay})<UNIX_TIMESTAMP(CURRENT_TIMESTAMP)
+      order by gmt_create desc
+      LIMIT ${offset},${count}
+      `;
+    const data = await client.query(sql);
+    if (data && data.length) {
+      const re = /(user|lawyer)_(\w+)/;
+      // @ts-ignore
+      const items = data.map(item => {
+        return Object.entries(item).reduce((pre, [key,value])=>{
+          const ms = key.match(re);
+          if (ms) {
+            // @ts-ignore
+            pre[ms[1]] = pre[ms[1]] || {};
+            // @ts-ignore
+            pre[ms[1]][ms[2]] = value;
+          } else {
+            // @ts-ignore
+            pre[key] = value;
+          }
+          return pre;
+        }, {});
+      });
+      return items.map(camelcaseKeys);
+    }
+    return [];
+  }
   async stat() {
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
