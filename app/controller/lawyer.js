@@ -2,6 +2,9 @@
 
 const Controller = require('egg').Controller;
 
+// https://www.yuque.com/oqh30u/help/xpy1uo
+const msgTemplateId = '8xm2s0NOYD12-hKD3GT7m4iwsPmHxe-ET079-svjjvg';
+
 class LawyerController extends Controller {
   /**
    * GET /api/lawyer/lawyers/:sid
@@ -49,7 +52,28 @@ class LawyerController extends Controller {
       return;
     }
     const result = await this.service.lawyer.openMsg({fromUid, toUid, msg});
-    // TODO: send template msg to lawyer of toUid
+    // send template msg to lawyer of toUid
+    if (result) {
+      const {g3, period, name} = this.ctx.user;
+      const lawyer = await this.service.user.queryById(toUid);
+      if (lawyer) {
+        const formId = await this.ctx.helper.getFormId(user.appid, lawyer.wechatOpenid);
+        if (formId) {
+          const note = `${lawyer.name}律师，${period}届${g3}班${name}向你提交法律咨询留言，点击查看详情。`;
+          const accesstoken = await this.service.wechat.accessToken({appid: user.appid});
+          const date = new Date().toLocaleString('cn', {timeZone: 'Asia/Shanghai'});
+          // TODO: page is msg list
+          const page = '';
+          this.service.notification.send({
+            accessToken: accesstoken.access_token,
+            templateId: msgTemplateId,
+            openid: lawyer.wechatOpenid,
+            formId,
+            page,
+          }, [note, date]);
+        }
+      }
+    }
     this.ctx.body = {
       success: result,
     };
@@ -77,8 +101,33 @@ class LawyerController extends Controller {
     if (result) {
       // msg status: active
       await this.service.lawyer.activeMsg(pid);
+      // send template msg to user of toUid
+      const meta = await this.service.lawyer.queryMsgMeta(pid);
+      if (meta) {
+        const isLawyerFeedback = String(meta.toUid)===String(fromUid);
+        const anotherUser = await this.service.user.queryById(toUid);
+        if (anotherUser) {
+          const formId = await this.ctx.helper.getFormId(user.appid, anotherUser.openidToSend);
+          if (formId) {
+            const lawyer = isLawyerFeedback?user:anotherUser;
+            const xiaoyou = isLawyerFeedback?anotherUser:user;
+            const note = isLawyerFeedback ? `${xiaoyou.name}，${lawyer.name}律师已经回复您的咨询，点击查看详情。` :
+            `${lawyer.name}律师，${xiaoyou.period}届${xiaoyou.g3}班${xiaoyou.name}咨询有新的留言，点击查看详情。`;
+            const accesstoken = await this.service.wechat.accessToken({appid: user.appid});
+            const date = new Date().toLocaleString('cn', {timeZone: 'Asia/Shanghai'});
+            // TODO: page is msg list
+            const page = '';
+            this.service.notification.send({
+              accessToken: accesstoken.access_token,
+              templateId: msgTemplateId,
+              openid: lawyer.wechatOpenid,
+              formId,
+              page,
+            }, [note, date]);
+          }
+        }
+      }
     }
-    // TODO: send template msg to user of toUid
     this.ctx.body = {
       success: result,
     };
@@ -98,7 +147,28 @@ class LawyerController extends Controller {
       return;
     }
     const result = await this.service.lawyer.closeMsg({id, finished, uid: user.id});
-    // TODO: send template msg to lawyer
+    // send template msg to lawyer
+    if (result) {
+      const lawyer = await this.service.user.getUserById(meta.toUid);
+      if (lawyer) {
+        const formId = await this.ctx.helper.getFormId(user.appid, lawyer.wechatOpenid);
+        if (formId) {
+          const {g3, period, name} = this.ctx.user;
+          const note = `${lawyer.name}律师，${period}届${g3}班${name}已经关闭咨询，感谢您的付出，点击查看详情。`;
+          const accesstoken = await this.service.wechat.accessToken({appid: user.appid});
+          const date = new Date().toLocaleString('cn', {timeZone: 'Asia/Shanghai'});
+          // TODO: page is my_consulting
+          const page = '';
+          this.service.notification.send({
+            accessToken: accesstoken.access_token,
+            templateId: msgTemplateId,
+            openid: lawyer.wechatOpenid,
+            formId,
+            page,
+          }, [note, date]);
+        }
+      }
+    }
     this.ctx.body = {
       success: result,
     };
