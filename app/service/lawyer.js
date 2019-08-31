@@ -141,43 +141,56 @@ class LawyerService extends Service {
     return false;
   }
   /**
-   * @param {{offset: number, count: number, type: string, uid: number, consultingMe: boolean}} param0
+   * @param {{offset: number, count: number, type: string, uid: number}} param0
    */
-  async consultings({offset, count, type, uid, consultingMe}) {
+  async myConsulting({offset, count, type, uid}) {
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
     const camelcaseKeys = this.ctx.helper.camelcaseKeys;
 
     const {msgUndoneStatusEnum, msgDoneStatusEnum} = this.ctx.helper;
     const statuses = type === 'done' ? msgDoneStatusEnum : msgUndoneStatusEnum;
-    const uidKey = consultingMe ? 'to_uid' : 'from_uid';
     // UNIX_TIMESTAMP(a.gmt_create) as create_time
     const sql = `select a.*,
-      b.name as user_name,b.period as user_period,b.g3 as user_g3,b.phone_number as user_phone,b.mobile as user_mobile,b.wechat as user_wechat
+      b.name as lawyer_name,b.period as lawyer_period,b.g3 as lawyer_g3,b.phone_number as lawyer_phone,b.mobile as lawyer_mobile,b.wechat as lawyer_wechat
       from lawyer_msg_meta a
       left join user b
-      on b.id=a.${uidKey}
-      where a.${uidKey} = ? and a.status in ('${statuses.join('\',\'')}')
+      on b.id=a.to_uid
+      where a.from_uid = ? and a.status in ('${statuses.join('\',\'')}')
       order by gmt_create desc
       LIMIT ${offset},${count}
       `;
     const data = await client.query(sql, [uid]);
     if (data && data.length) {
-      // @ts-ignore
-      const items = await Promise.all(data.map(async item => {
-        if (type === 'done') {
-          return {
-            ...item,
-            hasUnread: false,
-          };
-        }
-        const hasUnread = await this.msgHasUnread({pid: item.id, uid});
-        return {
-          ...item,
-          hasUnread,
-        };
-      }));
-      return items.map(camelcaseKeys);
+      const items = await this._iterateHasUnread(data, type, uid);
+      return toNestedJson(items).map(camelcaseKeys);
+    }
+    return null;
+  }
+  /**
+   * @param {{offset: number, count: number, type: string, uid: number}} param0
+   */
+  async consultingMe({offset, count, type, uid}) {
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const camelcaseKeys = this.ctx.helper.camelcaseKeys;
+
+    const {msgUndoneStatusEnum, msgDoneStatusEnum} = this.ctx.helper;
+    const statuses = type === 'done' ? msgDoneStatusEnum : msgUndoneStatusEnum;
+    // UNIX_TIMESTAMP(a.gmt_create) as create_time
+    const sql = `select a.*,
+      b.name as user_name,b.period as user_period,b.g3 as user_g3,b.phone_number as user_phone,b.mobile as user_mobile,b.wechat as user_wechat
+      from lawyer_msg_meta a
+      left join user b
+      on b.id=a.from_uid
+      where a.to_uid = ? and a.status in ('${statuses.join('\',\'')}')
+      order by gmt_create desc
+      LIMIT ${offset},${count}
+      `;
+    const data = await client.query(sql, [uid]);
+    if (data && data.length) {
+      const items = await this._iterateHasUnread(data, type, uid);
+      return toNestedJson(items).map(camelcaseKeys);
     }
     return null;
   }
@@ -207,6 +220,28 @@ class LawyerService extends Service {
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
     const sql = `select * from lawyer_msg where to_uid=? order by gmt_create desc limit 0,1`;
+    const data = await client.query(sql, [uid]);
+    if (data && data.length) {
+      return data[0].read === 0;
+    }
+    return false;
+  }
+  /**
+   * 是否有未读消息
+   * @param {{uid: number}} param0
+   */
+  async lawyerHasUnread({uid}) {
+    const result = await this.hasCreatedMsg({uid});
+    if (result) {
+      return result;
+    }
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const sql = `
+      select * from lawyer_msg_meta as a
+      full outer join lawyer_msg b on a.id=b.pid
+      where a.to_uid=? and b.read=0
+      order by gmt_create desc`;
     const data = await client.query(sql, [uid]);
     if (data && data.length) {
       return data[0].read === 0;
@@ -303,24 +338,7 @@ class LawyerService extends Service {
       `;
     const data = await client.query(sql);
     if (data && data.length) {
-      const re = /(user|lawyer)_(\w+)/;
-      // @ts-ignore
-      const items = data.map(item => {
-        return Object.entries(item).reduce((pre, [key,value])=>{
-          const ms = key.match(re);
-          if (ms) {
-            // @ts-ignore
-            pre[ms[1]] = pre[ms[1]] || {};
-            // @ts-ignore
-            pre[ms[1]][ms[2]] = value;
-          } else {
-            // @ts-ignore
-            pre[key] = value;
-          }
-          return pre;
-        }, {});
-      });
-      return items.map(camelcaseKeys);
+      return toNestedJson(data).map(camelcaseKeys);
     }
     return [];
   }
@@ -337,5 +355,55 @@ class LawyerService extends Service {
       `;
     return await client.query(sql);
   }
+  /**
+   * @param {object[]} items
+   * @param {string} type
+   * @param {number} uid
+   */
+  async _iterateHasUnread(items, type, uid) {
+    if (type === 'done') {
+      /**
+       * @param {any} item
+       */
+      return items.map(item => ({
+        ...item,
+        hasUnread: false,
+      }));
+    }
+    return await Promise.all(items.map(async item => {
+      const hasUnread = await this.msgHasUnread({pid: item.id, uid});
+      return {
+        ...item,
+        hasUnread,
+      };
+    }));
+  }
 }
 module.exports = LawyerService;
+
+
+/**
+ * @param {{ [s: string]: any; }[]} data
+ */
+function toNestedJson(data) {
+  if (!data || !data.length) {
+    return [];
+  }
+  const re = /(user|lawyer)_(\w+)/;
+  /**
+   * @param {{ [s: string]: any; }} item
+   */
+  function fn(item) {
+    return Object.entries(item).reduce((pre, [key, value])=>{
+      const ms = key.match(re);
+      if (ms) {
+        pre[ms[1]] = pre[ms[1]] || {};
+        pre[ms[1]][ms[2]] = value;
+      } else {
+        pre[key] = value;
+      }
+      return pre;
+    }, /** @type {{[s: string]: any;}} */({}));
+  }
+  return data.map(fn);
+}

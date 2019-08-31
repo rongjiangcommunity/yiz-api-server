@@ -151,10 +151,9 @@ class LawyerController extends Controller {
       };
       return;
     }
-    const data = await this.service.lawyer.consultings({
+    const data = await this.service.lawyer.consultingMe({
       offset, count, type,
       uid: user.id,
-      consultingMe: true,
     });
     this.ctx.body = {
       success: true,
@@ -183,10 +182,9 @@ class LawyerController extends Controller {
     if (validTypes.indexOf(type) < 0) {
       type = validTypes[0];
     }
-    const data = await this.service.lawyer.consultings({
+    const data = await this.service.lawyer.myConsulting({
       offset, count, type,
       uid: user.id,
-      consultingMe: false,
     });
     this.ctx.body = {
       success: true,
