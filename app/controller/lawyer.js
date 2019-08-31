@@ -107,7 +107,7 @@ class LawyerController extends Controller {
         const isLawyerFeedback = String(meta.toUid)===String(fromUid);
         const anotherUser = await this.service.user.queryById(toUid);
         if (anotherUser) {
-          const formId = await this.ctx.helper.getFormId(user.appid, anotherUser.openidToSend);
+          const formId = await this.ctx.helper.getFormId(user.appid, anotherUser.wechatOpenid);
           if (formId) {
             const lawyer = isLawyerFeedback?user:anotherUser;
             const xiaoyou = isLawyerFeedback?anotherUser:user;
