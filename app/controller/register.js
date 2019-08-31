@@ -129,14 +129,15 @@ class RegisterController extends Controller {
         msg = [titles.notok, '请重新提交信息', date, displayName];
         page = 'pages/register/register';
       }
-      this.service.wechat.authNotify({
-        access_token: accesstoken.access_token,
+      const templateId = 'K_Q5XSRaZbDSbJ8SzJFTVMh6wsCv7S4bC90eSRsI7Gs';
+      this.service.notification.send({
+        accessToken: accesstoken.access_token,
+        templateId,
         openid: uid,
         formId,
         page,
       }, msg);
     }
-
     this.ctx.body = {
       success: result,
     };
