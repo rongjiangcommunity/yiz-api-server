@@ -5,8 +5,6 @@ const Service = require('egg').Service;
 const crypto = require('crypto');
 const secret = '93sa37i4pTFWA2l6gun/AA';
 const defaultExSeconds = 24*60*60;
-const server = 'https://api.weixin.qq.com';
-
 
 class WechatService extends Service {
   /**

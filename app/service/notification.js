@@ -10,7 +10,7 @@ class NotificationService extends Service {
   /**
    * https://mp.weixin.qq.com/wxopen/tmplmsg?action=self_list&token=1293587518&lang=zh_CN
    * K_Q5XSRaZbDSbJ8SzJFTVMh6wsCv7S4bC90eSRsI7Gs: 实名认证审核通知 [status, note, time, name]
-   * K_Q5XSRaZbDSbJ8SzJFTVMh6wsCv7S4bC90eSRsI7Gs: 留言提交成功通知 [name,note,time]
+   * 8xm2s0NOYD12-hKD3GT7m4iwsPmHxe-ET079-svjjvg: 留言提交成功通知 [note,time]
    *
    * https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/template-message.html
    * @param {{accessToken: string, templateId: string, openid: string, formId: string, page: string}} params0

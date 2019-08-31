@@ -23,6 +23,18 @@ class UserService extends Service {
     return null;
   }
   /**
+   * @param {number} id
+   */
+  async queryById(id) {
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const user = await client.get('user', {id});
+    if (user) {
+      return tranformKeys(user, camelcase);
+    }
+    return null;
+  }
+  /**
    * @param {{openids:string[],appid?:string}} param
    */
   async batchQuery({openids}) {
