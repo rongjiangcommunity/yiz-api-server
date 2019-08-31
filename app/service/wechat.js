@@ -100,53 +100,6 @@ class WechatService extends Service {
     const result = await this.ctx.curl(`${server}?${querys}`, {dataType: 'json'});
     return result && result.data || '';
   }
-  /**
-   * https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/template-message.html
-   * @param {{access_token: string, openid: string, formId: string, page: string}} params0
-   * @param {['ok'|'notok',string, string, string]} param1
-   */
-  async authNotify({access_token, openid, formId, page}, [status, note, time, name]) {
-    const templateId = 'K_Q5XSRaZbDSbJ8SzJFTVMh6wsCv7S4bC90eSRsI7Gs';
-
-    const body = {
-      'touser': openid,
-      'template_id': templateId,
-      page,
-      'form_id': formId,
-      'data': {
-        // 认证结果
-        'keyword1': {
-          'value': status,
-          'color': '#173177',
-        },
-        // 备注
-        'keyword2': {
-          'value': note,
-          'color': '#173177',
-        },
-        // 操作时间
-        'keyword3': {
-          'value': time,
-          'color': '#173177',
-        },
-        'keyword4': {
-          'value': name,
-          'color': '#173177',
-        },
-      },
-      'emphasis_keyword': 'keyword1.DATA',
-    };
-    // eslint-disable-next-line max-len
-    const url = `${server}/cgi-bin/message/wxopen/template/send?access_token=${access_token}`;
-    const result = await this.ctx.curl(url, {
-      method: 'POST',
-      dataType: 'json',
-      contentType: 'json',
-      data: body,
-    });
-    this.ctx.logger.info('template_messaging', result && result.data);
-    return result && result.data && result.data.errcode===0;
-  }
 }
 
 module.exports = WechatService;
