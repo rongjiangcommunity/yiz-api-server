@@ -24,11 +24,15 @@ class LawyerController extends Controller {
   async openMsg() {
     const user = this.ctx.user;
     const {fromUid, toUid, msg} = this.ctx.request.body;
-
-    if (user && user.id !== fromUid) {
+    if (fromUid === toUid) {
       this.ctx.status = 403;
       return;
     }
+    if (user && String(user.id) !== String(fromUid)) {
+      this.ctx.status = 403;
+      return;
+    }
+
     if (!msg) {
       this.ctx.status = 404;
       return;
@@ -60,7 +64,7 @@ class LawyerController extends Controller {
     const user = this.ctx.user;
     const {fromUid, toUid, msg, pid} = this.ctx.request.body;
 
-    if (!user || user.id !== fromUid) {
+    if (!user || String(user.id) !== String(fromUid)) {
       this.ctx.status = 403;
       return;
     }
@@ -89,8 +93,7 @@ class LawyerController extends Controller {
     const user = this.ctx.user;
     const {id, finished} = this.ctx.request.body;
     const meta = await this.service.lawyer.queryMsgMeta(id);
-    this.logger.info('meta', meta, user.id);
-    if (meta.fromUid !== user.id && meta.toUid !== user.id) {
+    if (String(meta.fromUid) !== String(user.id) && String(meta.toUid) !== String(user.id)) {
       this.ctx.status = 403;
       return;
     }
@@ -218,7 +221,7 @@ class LawyerController extends Controller {
       this.ctx.status = 404;
       return;
     }
-    if (meta.fromUid!==user.id && meta.toUid!==user.id) {
+    if (String(meta.fromUid)!==String(user.id) && String(meta.toUid)!==String(user.id)) {
       this.ctx.status = 403;
       return;
     }
