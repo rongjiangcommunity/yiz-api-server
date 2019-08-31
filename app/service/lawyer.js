@@ -287,7 +287,6 @@ class LawyerService extends Service {
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
     const data = await client.get('lawyer', {uid: id});
-    this.logger.info('data', data);
     return data ? true : false;
   }
   /**
@@ -299,7 +298,7 @@ class LawyerService extends Service {
     // eslint-disable-next-line max-len
     const sql = 'SELECT * from lawyer a INNER JOIN (SELECT * from user WHERE wechat_openid =?) b ON a.uid = b.id';
     const result = await client.query(sql, [openid]);
-    return result ? true : false;
+    return result && result.length ? true : false;
   }
   /**
    * @param {number[]} ids
