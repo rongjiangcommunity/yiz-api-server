@@ -15,8 +15,9 @@ class NotificationService extends Service {
    * https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/template-message.html
    * @param {{accessToken: string, templateId: string, openid: string, formId: string, page: string}} params0
    * @param {string[]} params
+   * @param {string} emphasisKeyword
    */
-  async send({accessToken, templateId, openid, formId, page}, params) {
+  async send({accessToken, templateId, openid, formId, page}, params, emphasisKeyword) {
     const data = params.reduce((pre, item, index) => {
       const key = `keyword${index+1}`;
       // @ts-ignore
@@ -31,8 +32,11 @@ class NotificationService extends Service {
       'form_id': formId,
       page,
       data,
-      'emphasis_keyword': 'keyword1.DATA',
+      'emphasis_keyword': '',
     };
+    if (emphasisKeyword) {
+      body.emphasis_keyword = `${emphasisKeyword}`;
+    }
     // eslint-disable-next-line max-len
     const url = `${server}/cgi-bin/message/wxopen/template/send?access_token=${accessToken}`;
     const result = await this.ctx.curl(url, {

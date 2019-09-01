@@ -130,13 +130,14 @@ class RegisterController extends Controller {
         page = 'pages/register/register';
       }
       const templateId = 'K_Q5XSRaZbDSbJ8SzJFTVMh6wsCv7S4bC90eSRsI7Gs';
+      const emphasisKeyword = 'keyword1.DATA';
       this.service.notification.send({
         accessToken: accesstoken.access_token,
         templateId,
         openid: uid,
         formId,
         page,
-      }, msg);
+      }, msg, emphasisKeyword);
     }
     this.ctx.body = {
       success: result,
