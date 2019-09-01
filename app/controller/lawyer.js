@@ -70,7 +70,7 @@ class LawyerController extends Controller {
             openid: lawyer.wechatOpenid,
             formId,
             page,
-          }, [note, date]);
+          }, [note, date], null);
         }
       }
     }
@@ -123,7 +123,7 @@ class LawyerController extends Controller {
               openid: lawyer.wechatOpenid,
               formId,
               page,
-            }, [note, date]);
+            }, [note, date], null);
           }
         }
       }
@@ -165,7 +165,7 @@ class LawyerController extends Controller {
             openid: lawyer.wechatOpenid,
             formId,
             page,
-          }, [note, date]);
+          }, [note, date], null);
         }
       }
     }
