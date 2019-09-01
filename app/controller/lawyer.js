@@ -149,7 +149,7 @@ class LawyerController extends Controller {
     const result = await this.service.lawyer.closeMsg({id, finished, uid: user.id});
     // send template msg to lawyer
     if (result) {
-      const lawyer = await this.service.user.getUserById(meta.toUid);
+      const lawyer = await this.service.user.queryById(meta.toUid);
       if (lawyer) {
         const formId = await this.ctx.helper.getFormId(user.appid, lawyer.wechatOpenid);
         if (formId) {
