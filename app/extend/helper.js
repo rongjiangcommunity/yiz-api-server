@@ -1,4 +1,5 @@
 'use strict';
+const camelcase = require('camelcase');
 
 /**
  * 权限设计
@@ -48,6 +49,9 @@ exports.saveFormId = async function(appid, openid, formId) {
   if (!formId || formId.indexOf('mock')>=0) {
     return;
   }
+  if (!checkFormId(formId)) {
+    return;
+  }
   // @ts-ignore
   const redis = /** @type {MyTypes.Redis} */(this.ctx.app.redis.get('redis'));
   const key = `${appid}:form_ids:${openid}`;
@@ -75,7 +79,7 @@ exports.getFormId = async function(appid, openid) {
   let [formId, ts] = await redis.zpopmin(key);
   ts = Number(ts);
   while (formId) {
-    if (ts+senvenDaysInSeconds*1000-THRESHOLD*1000 > Date.now()) {
+    if (checkFormId(formId) && ts+senvenDaysInSeconds*1000-THRESHOLD*1000 > Date.now()) {
       break;
     }
     // @ts-ignore
@@ -86,3 +90,37 @@ exports.getFormId = async function(appid, openid) {
 
   return formId;
 };
+
+/**
+ * @param {{[key: string]: any}} o
+ */
+function camelcaseKeys(o) {
+  return tranformKeys(o, camelcase);
+}
+/**
+ * @param {{[key: string]: any}} o
+ * @param {function} fn
+ */
+function tranformKeys(o, fn) {
+  const u = {};
+  Object.keys(o).forEach(key => {
+    // @ts-ignore
+    u[fn(key)] = o[key];
+  });
+  return u;
+}
+/**
+ * @param {string} formId
+ */
+function checkFormId(formId) {
+  return /^[\d\w]{32}$/.test(formId);
+}
+
+exports.camelcaseKeys = camelcaseKeys;
+exports.tranformKeys = tranformKeys;
+
+exports.msgStatusEnum = ['created', 'active', 'finished', 'closed', 'timeout'];
+exports.msgUndoneStatusEnum = ['created', 'active'];
+exports.msgDoneStatusEnum = ['finished', 'closed', 'timeout'];
+
+
