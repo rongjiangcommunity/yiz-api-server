@@ -58,6 +58,9 @@ module.exports = app => {
   router.get('/api/lawyer/msg/:sid/:pid', isWxLogin, checkRole(XIAOYOU), c.lawyer.queryMsg);
   router.get('/api/lawyer/is_lawyer/:sid', isWxLogin, c.lawyer.isLawyer);
   router.get('/api/lawyer/has_unread/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.hasUnread);
+  router.get('/api/lawyer/user_has_unread/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.userHasUnread);
+  router.get('/api/lawyer/lawyer_has_unread/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.lawyerHasUnread);
+
   // router.get('/api/lawyer/stat/:sid', c.lawyer.stat);
 
   router.get('/api/query/hgetall/:pattern', authtoken, c.home.phgetall);

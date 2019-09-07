@@ -227,7 +227,7 @@ class LawyerService extends Service {
     return false;
   }
   /**
-   * 是否有未读消息
+   * 律师是否有未读消息
    * @param {{uid: number}} param0
    */
   async lawyerHasUnread({uid}) {
@@ -238,13 +238,39 @@ class LawyerService extends Service {
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
     const sql = `
-      select * from lawyer_msg_meta as a
-      full outer join lawyer_msg b on a.id=b.pid
-      where a.to_uid=? and b.read=0
-      order by gmt_create desc`;
-    const data = await client.query(sql, [uid]);
+      select a.id, b.read, max(b.gmt_create) as time from lawyer_msg_meta a
+      join lawyer_msg b
+      on a.id=b.pid
+      where a.to_uid=? and a.status ='active' and b.to_uid=?
+      GROUP by a.id,b.read
+      ORDER by time desc`;
+    const data = await client.query(sql, [uid, uid]);
     if (data && data.length) {
-      return data[0].read === 0;
+      return checkHasUnread(data);
+    }
+    return false;
+  }
+  /**
+   * 用户是否有未读消息
+   * @param {{uid: number}} param0
+   */
+  async userHasUnread({uid}) {
+    const result = await this.hasCreatedMsg({uid});
+    if (result) {
+      return result;
+    }
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const sql = `
+      select a.id, b.read, max(b.gmt_create) as time from lawyer_msg_meta a
+      join lawyer_msg b
+      on a.id=b.pid
+      where a.from_uid=? and a.status ='active' and b.to_uid=?
+      GROUP by a.id,b.read
+      ORDER by time desc`;
+    const data = await client.query(sql, [uid, uid]);
+    if (data && data.length) {
+      return checkHasUnread(data);
     }
     return false;
   }
@@ -346,7 +372,7 @@ class LawyerService extends Service {
     const client = await (this.app.mysql.get('yiz'));
     const sql =`
       SELECT to_uid, b.name, b.period, b.g3, status, COUNT(*) as cnt
-      from yiz.lawyer_msg_meta a
+      from lawyer_msg_meta a
       JOIN yiz.user b
       on a.to_uid=b.id
       GROUP BY to_uid,status
@@ -405,4 +431,23 @@ function toNestedJson(data) {
     }, /** @type {{[s: string]: any;}} */({}));
   }
   return data.map(fn);
+}
+
+/**
+ * @param {{id:number,time:string,read: 0|1}[]} list
+ */
+function checkHasUnread(list) {
+  /** @type {{[key: string]: boolean}} */
+  const iterated = {};
+  for (let i=0; i<list.length; i++) {
+    const item = list[i];
+    if (!iterated[`${item.id}`]) {
+      if (item.read === 0) {
+        return true;
+      }
+    } else {
+      iterated[`${item.id}`] = true;
+    }
+  }
+  return false;
 }
