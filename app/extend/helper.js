@@ -69,7 +69,7 @@ exports.getFormId = async function(appid, openid) {
   // @ts-ignore
   const redis = /** @type {MyTypes.Redis} */(this.ctx.app.redis.get('redis'));
   // 7days
-  const senvenDaysInSeconds = 7*24*60*60;
+  const sevenDaysInSeconds = 7*24*60*60;
   // 10min
   const THRESHOLD = 10*60;
 
@@ -79,7 +79,7 @@ exports.getFormId = async function(appid, openid) {
   let [formId, ts] = await redis.zpopmin(key);
   ts = Number(ts);
   while (formId) {
-    if (checkFormId(formId) && ts+senvenDaysInSeconds*1000-THRESHOLD*1000 > Date.now()) {
+    if (checkFormId(formId) && ts+sevenDaysInSeconds*1000-THRESHOLD*1000 > Date.now()) {
       break;
     }
     // @ts-ignore
