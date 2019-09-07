@@ -255,10 +255,6 @@ class LawyerService extends Service {
    * @param {{uid: number}} param0
    */
   async userHasUnread({uid}) {
-    const result = await this.hasCreatedMsg({uid});
-    if (result) {
-      return result;
-    }
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
     const sql = `
