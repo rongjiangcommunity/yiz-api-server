@@ -36,6 +36,7 @@ module.exports = app => {
   router.post('/api/user/review/:sid/:uid', isWxLogin, checkRole(CADMIN), c.register.review);
 
   router.get('/api/doctor/doctors', c.doctor.doctors);
+  router.post('/api/doctor/sort', c.doctor.sort);
   router.get('/api/doctor/doctors/:sid', isWxLogin, c.doctor.doctors);
   router.post('/api/doctor/booking/:sid', isWxLogin, checkRole(XIAOYOU), c.doctor.book);
   router.get('/api/doctor/booking/:sid/:bid', isWxLogin, checkRole(XIAOYOU), c.doctor.mybooking);

@@ -3,15 +3,54 @@
 
 const Controller = require('egg').Controller;
 
+const appid = 'yiz';
+const sortkey = `${appid}:doctor:sortby`;
+
 class DoctorController extends Controller {
   /**
    * GET /api/doctor/doctors/:sid
    * curl 127.0.0.1:7001/api/doctor/doctors/yiz:$sid
    */
   async doctors() {
+    // @ts-ignore
+    const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
     const data = await this.service.doctor.doctors();
+    /** @type {{[key: number]: number}} */
+    let sortby = {};
+    const sortbyStr = await redis.get(sortkey);
+    if (sortbyStr) {
+      sortby = JSON.parse(sortbyStr);
+    }
+    /** @typedef {{[key: string]: any} & {order: number}} DoctorItem*/
+    /** @type DoctorItem[] */
+    let items = [];
+    if (data && data.length) {
+      // @ts-ignore
+      items = data.map(item => {
+        item.order = sortby[item.id] >= 0 ? sortby[item.id] : item.id;
+        return item;
+      // @ts-ignore
+      }).sort((a, b) => {
+        return a.order - b.order;
+      });
+    }
     this.ctx.body = {
-      data,
+      data: items,
+      success: true,
+    };
+  }
+  async sort() {
+    // @ts-ignore
+    const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
+    const {sortby} = this.ctx.request.body;
+    if (!sortby || typeof sortby !== 'object') {
+      this.ctx.body = {
+        success: false,
+      };
+      return;
+    }
+    await redis.set(sortkey, JSON.stringify(sortby));
+    this.ctx.body = {
       success: true,
     };
   }
