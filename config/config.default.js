@@ -43,6 +43,7 @@ module.exports = appInfo => {
     },
   };
   config.security = {
+    domainWhiteList: ['https://46hw7.csb.app'],
     csrf: {
       ignoreJSON: false,
       ignore: ctx => {
@@ -57,4 +58,3 @@ module.exports = appInfo => {
   config.authtoken = '';
   return config;
 };
-
