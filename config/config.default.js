@@ -43,7 +43,7 @@ module.exports = appInfo => {
     },
   };
   config.security = {
-    domainWhiteList: ['https://46hw7.csb.app'],
+    domainWhiteList: ['https://jyyizhong.web.app'],
     csrf: {
       ignoreJSON: false,
       ignore: ctx => {
