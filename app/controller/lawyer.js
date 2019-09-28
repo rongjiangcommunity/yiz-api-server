@@ -12,8 +12,21 @@ class LawyerController extends Controller {
    * curl 127.0.0.1:7001/api/lawyer/lawyers/:sid
    */
   async lawyers() {
-    // await this.service.lawyer.insert();
     const data = await this.service.lawyer.lawyers();
+    this.ctx.body = {
+      data,
+      success: true,
+    };
+  }
+  /**
+   * GET /api/lawyer/query/:id/:sid
+   * 查询律师资料
+   *
+   * curl 127.0.0.1:7001/api/lawyer/query/16/:sid
+   */
+  async lawyer() {
+    const {id} = this.ctx.params;
+    const data = await this.service.lawyer.lawyer(id);
     this.ctx.body = {
       data,
       success: true,

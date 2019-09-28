@@ -50,6 +50,7 @@ module.exports = app => {
   router.post('/api/doctor/admin/booking/:sid/:bid', isWxLogin, checkRole(ADMIN), c.doctor.updatebooking);
 
   router.get('/api/lawyer/lawyers/:sid', isWxLogin, c.lawyer.lawyers);
+  router.get('/api/lawyer/query/:id/:sid', isWxLogin, c.lawyer.lawyer);
   router.post('/api/lawyer/msg/open/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.openMsg);
   router.post('/api/lawyer/msg/add/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.addMsg);
   router.post('/api/lawyer/msg/close/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.closeMsg);

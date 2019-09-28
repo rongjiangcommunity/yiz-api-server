@@ -4,27 +4,37 @@
 const Service = require('egg').Service;
 
 class LawyerService extends Service {
-  // TODO: rm below insert api
-  async insert() {
-    // @ts-ignore
-    const client = await (this.app.mysql.get('yiz'));
-    await client.insert('lawyer', {
-      uid: 1,
-      status: 1,
-    });
-  }
   async lawyers() {
     // @ts-ignore
     const client = await (this.app.mysql.get('yiz'));
     const camelcaseKeys = this.ctx.helper.camelcaseKeys;
     const sql = `
-      select lawyer.id,lawyer.uid,lawyer.avatar,user.name,user.period,user.g3 from lawyer join user
+      select lawyer.*,user.name,user.period,user.g3 from lawyer join user
       on lawyer.uid = user.id
+      where lawyer.status=1
       limit 128;
     `;
     const data = await client.query(sql);
     if (data && data.length) {
       return data.map(camelcaseKeys);
+    }
+    return null;
+  }
+  /**
+   * @param {number} id
+   */
+  async lawyer(id) {
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const camelcaseKeys = this.ctx.helper.camelcaseKeys;
+    const sql = `
+      select lawyer.*,user.name,user.period,user.g3 from lawyer join user
+      on lawyer.uid = user.id
+      where lawyer.status=1 and lawyer.id=${id}
+    `;
+    const data = await client.query(sql);
+    if (data && data.length) {
+      return data.map(camelcaseKeys)[0];
     }
     return null;
   }
