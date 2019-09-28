@@ -18,7 +18,7 @@ class LawyerService extends Service {
     const client = await (this.app.mysql.get('yiz'));
     const camelcaseKeys = this.ctx.helper.camelcaseKeys;
     const sql = `
-      select lawyer.id,lawyer.uid,lawyer.avatar,name,period,g3 from lawyer join user
+      select lawyer.id,lawyer.uid,lawyer.avatar,user.name,user.period,user.g3 from lawyer join user
       on lawyer.uid = user.id
       limit 128;
     `;
