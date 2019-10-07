@@ -255,6 +255,7 @@ class LawyerService extends Service {
       GROUP by a.id,b.read
       ORDER by time desc`;
     const data = await client.query(sql, [uid, uid]);
+
     if (data && data.length) {
       return checkHasUnread(data);
     }
@@ -444,15 +445,15 @@ function toNestedJson(data) {
  */
 function checkHasUnread(list) {
   /** @type {{[key: string]: boolean}} */
-  const iterated = {};
+  const hasRead = {};
   for (let i=0; i<list.length; i++) {
     const item = list[i];
-    if (!iterated[`${item.id}`]) {
+    if (!hasRead[`${item.id}`]) {
       if (item.read === 0) {
         return true;
+      } else {
+        hasRead[`${item.id}`] = true;
       }
-    } else {
-      iterated[`${item.id}`] = true;
     }
   }
   return false;

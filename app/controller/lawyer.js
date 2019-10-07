@@ -75,8 +75,9 @@ class LawyerController extends Controller {
           const note = `${lawyer.name}律师，${period}届${g3}班${name}向你提交法律咨询留言，点击查看详情。`;
           const accesstoken = await this.service.wechat.accessToken({appid: user.appid});
           const date = new Date().toLocaleString('cn', {timeZone: 'Asia/Shanghai'});
-          // TODO: page is msg list
-          const page = '';
+          // TODO: result has no pid
+          // const page = `pages/lawyer/add_msg/index?pid=${pid}`;
+          const page = `pages/lawyer/consult_me/index`;
           this.service.notification.send({
             accessToken: accesstoken.access_token,
             templateId: msgTemplateId,
@@ -128,8 +129,8 @@ class LawyerController extends Controller {
             `${lawyer.name}律师，${xiaoyou.period}届${xiaoyou.g3}班${xiaoyou.name}咨询有新的留言，点击查看详情。`;
             const accesstoken = await this.service.wechat.accessToken({appid: user.appid});
             const date = new Date().toLocaleString('cn', {timeZone: 'Asia/Shanghai'});
-            // TODO: page is msg list
-            const page = '';
+            // page is msg list
+            const page = `pages/lawyer/add_msg/index?pid=${pid}`;
             this.service.notification.send({
               accessToken: accesstoken.access_token,
               templateId: msgTemplateId,
@@ -170,8 +171,7 @@ class LawyerController extends Controller {
           const note = `${lawyer.name}律师，${period}届${g3}班${name}已经关闭咨询，感谢您的付出，点击查看详情。`;
           const accesstoken = await this.service.wechat.accessToken({appid: user.appid});
           const date = new Date().toLocaleString('cn', {timeZone: 'Asia/Shanghai'});
-          // TODO: page is my_consulting
-          const page = '';
+          const page = 'pages/lawyer/my_consult/index';
           this.service.notification.send({
             accessToken: accesstoken.access_token,
             templateId: msgTemplateId,
