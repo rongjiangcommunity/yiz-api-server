@@ -12,7 +12,7 @@ class RegisterService extends Service {
     const {PENDING} = this.ctx.helper;
     // @ts-ignore
     const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
-    const {name, period, g3, wechat, mobile, classmates, message} = info;
+    const {name, period, gender, g3, wechat, mobile, classmates, message} = info;
 
     const key = `${appid}:apply:${openid}`;
     const now = Date.now();
@@ -26,6 +26,7 @@ class RegisterService extends Service {
     data.push(['name', name]);
     data.push(['period', period]);
     data.push(['g3', g3]);
+    data.push(['gender', gender]);
     data.push(['wechat', wechat]);
     data.push(['mobile', mobile]);
     data.push(['classmates', classmates]);
