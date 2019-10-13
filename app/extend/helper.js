@@ -122,5 +122,3 @@ exports.tranformKeys = tranformKeys;
 exports.msgStatusEnum = ['created', 'active', 'finished', 'closed', 'timeout'];
 exports.msgUndoneStatusEnum = ['created', 'active'];
 exports.msgDoneStatusEnum = ['finished', 'closed', 'timeout'];
-
-

@@ -49,6 +49,23 @@ module.exports = app => {
   router.get('/api/doctor/admin/booking/:sid', isWxLogin, checkRole(ADMIN), c.doctor.querybookings);
   router.post('/api/doctor/admin/booking/:sid/:bid', isWxLogin, checkRole(ADMIN), c.doctor.updatebooking);
 
+  router.get('/api/lawyer/lawyers/:sid', isWxLogin, c.lawyer.lawyers);
+  router.get('/api/lawyer/query/:id/:sid', isWxLogin, c.lawyer.lawyer);
+  router.post('/api/lawyer/msg/open/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.openMsg);
+  router.post('/api/lawyer/msg/add/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.addMsg);
+  router.post('/api/lawyer/msg/close/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.closeMsg);
+  router.post('/api/lawyer/msg/read/:sid/:pid', isWxLogin, checkRole(XIAOYOU), c.lawyer.markMsgRead);
+  router.get('/api/lawyer/consulting_me/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.consultingMe);
+  router.get('/api/lawyer/my_consulting/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.myConsulting);
+  router.get('/api/lawyer/msg/delay/:sid', isWxLogin, checkRole(ADMIN), c.lawyer.queryDelay);
+  router.get('/api/lawyer/msg/:sid/:pid', isWxLogin, checkRole(XIAOYOU), c.lawyer.queryMsg);
+  router.get('/api/lawyer/is_lawyer/:sid', isWxLogin, c.lawyer.isLawyer);
+  router.get('/api/lawyer/has_unread/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.hasUnread);
+  router.get('/api/lawyer/user_has_unread/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.userHasUnread);
+  router.get('/api/lawyer/lawyer_has_unread/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.lawyerHasUnread);
+
+  // router.get('/api/lawyer/stat/:sid', c.lawyer.stat);
+
   router.get('/api/query/hgetall/:pattern', authtoken, c.home.phgetall);
   router.get('/api/query/get/:pattern', authtoken, c.home.pget);
   router.get('/api/query/zrange/:pattern', authtoken, c.home.zrange);
