@@ -410,7 +410,7 @@ class LawyerController extends Controller {
 
     offset = posiveNumber(offset) ? Number(offset) : 0;
     count = posiveNumber(count) ? Number(count) : 100;
-    hours = posiveNumber(hours) ? Number(hours) : 24;
+    hours = posiveNumber(hours) ? Number(hours) : 1;
     const result = await this.service.lawyer.queryDelay({offset, count, hours});
     this.ctx.body = {
       success: true,
