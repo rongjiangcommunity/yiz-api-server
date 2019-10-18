@@ -14,6 +14,8 @@ module.exports = app => {
 
   const {router, controller: c} = app;
   router.get('/', c.home.index);
+  // for local test
+  // router.get('/api/uid', c.home.uid);
 
   router.post('/api/wechat/redeem', c.wechat.redeem);
   router.post('/api/wechat/expire', c.wechat.expire);
@@ -63,6 +65,9 @@ module.exports = app => {
   router.get('/api/lawyer/has_unread/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.hasUnread);
   router.get('/api/lawyer/user_has_unread/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.userHasUnread);
   router.get('/api/lawyer/lawyer_has_unread/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.lawyerHasUnread);
+
+  router.post('/api/geo/:sid', isWxLogin, c.geo.save);
+  router.get('/api/geo/nearby/:sid', isWxLogin, c.geo.nearby);
 
   // router.get('/api/lawyer/stat/:sid', c.lawyer.stat);
 
