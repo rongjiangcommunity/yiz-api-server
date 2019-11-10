@@ -71,6 +71,21 @@ module.exports = app => {
 
   // router.get('/api/lawyer/stat/:sid', c.lawyer.stat);
 
+  router.post('/api/magpie/zadd/:sid', isWxLogin, c.magpie.zadd);
+  router.get('/api/magpie/zrange/:sid', isWxLogin, c.magpie.zrange);
+  router.post('/api/magpie/zrem/:sid', isWxLogin, c.magpie.zrem);
+
+  router.post('/api/magpie/register/:sid', isWxLogin, c.magpie.register);
+  router.post('/api/magpie/info/:sid', isWxLogin, c.magpie.update);
+  router.get('/api/magpie/info/:sid', isWxLogin, c.magpie.query);
+  router.post('/api/magpie/:action/:openid/:sid', isWxLogin, c.magpie.heartbeat);
+  router.get('/api/magpie/heartbeat/:sid', isWxLogin, c.magpie.myHeartbeat);
+
+  router.get('/api/magpie/admin/user/:sid', isWxLogin, checkRole(ADMIN), c.magpie.queryByOpenid);
+  router.get('/api/magpie/admin/users/:sid', isWxLogin, checkRole(ADMIN), c.magpie.queryByStatus);
+  router.post('/api/magpie/admin/review/:openid/:opinion/:sid', isWxLogin, checkRole(ADMIN), c.magpie.review);
+  router.get('/api/magpie/admin/jupiter/:sid', isWxLogin, checkRole(ADMIN), c.magpie.jupiter);
+
   router.get('/api/query/hgetall/:pattern', authtoken, c.home.phgetall);
   router.get('/api/query/get/:pattern', authtoken, c.home.pget);
   router.get('/api/query/zrange/:pattern', authtoken, c.home.zrange);
