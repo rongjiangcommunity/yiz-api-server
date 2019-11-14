@@ -236,8 +236,19 @@ class MagpieController extends Controller {
       data: result,
     };
   }
-
-
+  /**
+   *
+   */
+  async recomend() {
+    const {openid} = this.ctx.wxuser;
+    const result = await this.ctx.service.magpie.recomend({
+      openid,
+    });
+    this.ctx.body = {
+      success: true,
+      data: result,
+    };
+  }
   /**
    * curl 127.0.0.1:7001/api/magpie/admin/query/:sid?openid=${openid}
    */

@@ -81,6 +81,41 @@ class MagpieService extends Service {
     return null;
   }
   /**
+   * @param {{openid: string}} param1
+   */
+  async recomend({openid}) {
+    // @ts-ignore
+    const client = await (this.app.mysql.get('yiz'));
+    const camelcaseKeys = this.ctx.helper.camelcaseKeys;
+    const info = await this.query({openid});
+    if (!info) {
+      return null;
+    }
+    const hearts = await client.select('magpie_heartbeat', {
+      where: {
+        from_wxid: openid,
+      },
+    });
+    const sql = `select * from magpie_user where
+      wechat_openid!='${openid}' and gender!='${info.gender}'`;
+    /** @type {string[]} */
+    const dislikes = hearts && hearts.length ?
+      // @ts-ignore
+      hearts.filter(h => h.feeling !==1).map(h => h.to_wxid) : [];
+    /**
+     * @param {string} id
+     */
+    const isDislike = (id) => dislikes.indexOf(id) >= 0;
+
+    const data = await client.query(sql);
+    if (data && data.length) {
+      // @ts-ignore
+      return data.filter((item) => !isDislike(item.wechat_openid))
+        .map(camelcaseKeys);
+    }
+    return null;
+  }
+  /**
    * @param {string[]} ids
    */
   async queryUserInfo(ids) {

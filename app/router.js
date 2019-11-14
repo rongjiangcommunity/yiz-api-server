@@ -80,6 +80,7 @@ module.exports = app => {
   router.get('/api/magpie/info/:sid', isWxLogin, c.magpie.query);
   router.post('/api/magpie/:action/:openid/:sid', isWxLogin, c.magpie.heartbeat);
   router.get('/api/magpie/heartbeat/:sid', isWxLogin, c.magpie.myHeartbeat);
+  router.get('/api/magpie/recomend/:sid', isWxLogin, c.magpie.recomend);
 
   router.get('/api/magpie/admin/user/:sid', isWxLogin, checkRole(ADMIN), c.magpie.queryByOpenid);
   router.get('/api/magpie/admin/users/:sid', isWxLogin, checkRole(ADMIN), c.magpie.queryByStatus);
