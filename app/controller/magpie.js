@@ -225,6 +225,9 @@ class MagpieController extends Controller {
       success: result,
     };
   }
+  /**
+   * curl 127.0.0.1:7001/api/magpie/heartbeat/:sid
+   */
   async myHeartbeat() {
     const {openid} = this.ctx.wxuser;
     const result = await this.ctx.service.magpie.myHeartbeat({
@@ -237,7 +240,7 @@ class MagpieController extends Controller {
     };
   }
   /**
-   *
+   * curl 127.0.0.1:7001/api/magpie/recomend/:sid
    */
   async recomend() {
     const {openid} = this.ctx.wxuser;
