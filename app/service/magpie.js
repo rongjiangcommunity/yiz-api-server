@@ -4,6 +4,26 @@ const Service = require('egg').Service;
 const decamelize = require('decamelize');
 
 class MagpieService extends Service {
+  get STATUS_CREATED() {
+    return 'created';
+  }
+  get STATUS_OK() {
+    return 'ok';
+  }
+  get STATUS_NOTOK() {
+    return 'notok';
+  }
+  get STATUS_DISABLED() {
+    return 'disabled';
+  }
+  get STATUS_ENUMS() {
+    return [
+      this.STATUS_CREATED,
+      this.STATUS_OK,
+      this.STATUS_NOTOK,
+      this.STATUS_DISABLED,
+    ];
+  }
   /**
    * @param {{row:object, appid?:string, openid: string}} param
    */
@@ -97,6 +117,7 @@ class MagpieService extends Service {
       },
     });
     const sql = `select * from magpie_user where
+      status='${this.STATUS_OK}' and
       wechat_openid!='${openid}' and gender!='${info.gender}'`;
     /** @type {string[]} */
     const dislikes = hearts && hearts.length ?

@@ -20,8 +20,6 @@ const columns = [
 const moreColumns = ['country_code', 'phone_number', 'email', 'living_area'];
 const allColumns = columns.concat(moreColumns);
 
-const reviewStatus = ['created', 'ok', 'notok', 'disabled'];
-
 class MagpieController extends Controller {
   /**
    * 添加个人相片/标签
@@ -149,9 +147,9 @@ class MagpieController extends Controller {
       };
       return;
     }
+    const status = this.service.magpie.STATUS_CREATED;
     const row = {
-      // statuses: created/ok/notok/disabled
-      status: 'created',
+      status,
       wechatOpenid: openid,
       ...params,
     };
@@ -278,6 +276,7 @@ class MagpieController extends Controller {
       };
       return;
     }
+    const reviewStatus = this.service.magpie.STATUS_ENUMS;
     // @ts-ignore
     const validStatus = status.split(',').filter(s=> reviewStatus.indexOf(s) >= 0);
     if (!validStatus.length) {
@@ -300,7 +299,7 @@ class MagpieController extends Controller {
   async review() {
     const {openid, opinion} = this.ctx.params;
     const {openid: reviewBy} = this.ctx.wxuser;
-
+    const reviewStatus = this.service.magpie.STATUS_ENUMS;
     const isOpinionValid = reviewStatus.indexOf(opinion) >= 0;
     if (!isOpinionValid) {
       this.ctx.body = {
