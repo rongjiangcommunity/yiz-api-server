@@ -201,7 +201,7 @@ class RegisterService extends Service {
     data.push(['approved_by_name', reviewerName]);
 
     // change name,g3,period
-    if (approved && g3 && period) {
+    if (g3 && period) {
       const row = {
         name,
         g3,
