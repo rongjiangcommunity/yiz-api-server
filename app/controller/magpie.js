@@ -62,9 +62,13 @@ class MagpieController extends Controller {
         // @ts-ignore
         [type2Sqlcolumn[type]]: items.join(','),
       };
-      await this.service.magpie.update({
-        row, openid,
-      });
+      try {
+        await this.service.magpie.update({
+          row, openid,
+        });
+      } catch (error) {
+        this.logger.error(error);
+      }
     }
     this.ctx.body = {
       success: result,
@@ -115,9 +119,13 @@ class MagpieController extends Controller {
         // @ts-ignore
         [type2Sqlcolumn[type]]: items.join(','),
       };
-      await this.service.magpie.update({
-        row, openid,
-      });
+      try {
+        await this.service.magpie.update({
+          row, openid,
+        });
+      } catch (error) {
+        this.logger.error(error);
+      }
     }
 
     this.ctx.body = {
