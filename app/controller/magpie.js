@@ -259,7 +259,7 @@ class MagpieController extends Controller {
     };
   }
   /**
-   * curl 127.0.0.1:7001/api/magpie/admin/query/:sid?openid=${openid}
+   * curl 127.0.0.1:7001/api/magpie/admin/user/:sid?openid=${openid}
    */
   async queryByOpenid() {
     const {openid} = this.ctx.query;
