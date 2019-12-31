@@ -56,5 +56,6 @@ module.exports = appInfo => {
     },
   };
   config.authtoken = '';
+  config.proxy = true;
   return config;
 };

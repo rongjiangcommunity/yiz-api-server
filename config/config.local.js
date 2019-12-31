@@ -23,3 +23,4 @@ exports.mysql = {
     },
   },
 };
+exports.proxy = false;
