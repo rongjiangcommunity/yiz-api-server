@@ -122,6 +122,44 @@ class UserService extends Service {
     const result = await redis.lpush(key, JSON.stringify(data));
     return result > 0;
   }
+
+  async queryAllUsers() {
+    const pattern = 'yiz:user:*';
+    const count = 1000;
+    // @ts-ignore
+    const redis = /** @type {MyTypes.Redis} */(this.app.redis.get('redis'));
+    /**
+     * @type string[]
+     */
+    const keys = [];
+    let [cur, result] = await redis.scan(0, 'count', count, 'match', pattern);
+    if (result && result.length) {
+      keys.push(...result);
+    }
+    while (cur !== '0') {
+      [cur, result] = await redis.scan(Number(cur), 'count', count, 'match', pattern);
+      if (result && result.length) {
+        keys.push(...result);
+      }
+    }
+    const pipe = redis.pipeline();
+    keys.forEach(key => pipe.hgetall(key));
+    const results = await pipe.exec();
+
+    // @ts-ignore
+    const items = results.map((r, index) => {
+      if (!r[0]) {
+        return {
+          wechat_openid: keys[index].replace('yiz:user:', ''),
+          ...r[1],
+        };
+      }
+      return null;
+    // @ts-ignore
+    }).filter(item => !!item);
+
+    return items;
+  }
 }
 module.exports = UserService;
 

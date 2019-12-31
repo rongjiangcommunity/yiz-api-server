@@ -88,6 +88,10 @@ class UserController extends Controller {
       success: result,
     };
   }
+
+  async queryAllUsers() {
+    this.ctx.body = await this.service.user.queryAllUsers();
+  }
 }
 
 module.exports = UserController;
