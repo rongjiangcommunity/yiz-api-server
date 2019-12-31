@@ -15,7 +15,6 @@
     "egg-mysql": "^3.0.0",
     "egg-redis": "^2.0.0",
     "egg-scripts": "^2.6.0",
-    "qcloudsms_js": "^0.1.1",
     "xlsx": "^0.14.5"
   },
   "devDependencies": {
