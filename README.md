@@ -34,6 +34,5 @@ redis-cli -p 6380  --eval pget.lua 0 , app:*
 
 * [Developing inside a Container]
 
-
 [egg]: https://eggjs.org
 [Developing inside a Container]: https://code.visualstudio.com/docs/remote/containers

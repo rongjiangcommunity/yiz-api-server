@@ -12,3 +12,4 @@ run/
 *.un~
 *.df
 .vscode
+.tmp
