@@ -32,9 +32,31 @@ module.exports = app => {
         return pre;
       }, {});
     }
+    /**
+     * sessionStore
+     */
+    app.sessionStore = {
+      async get(key) {
+        const res = await redis.get(key);
+        if (!res) return null;
+        return JSON.parse(res);
+      },
 
+      async set(key, value, maxAge) {
+        // maxAge not present means session cookies
+        // we can't exactly know the maxAge and just set an appropriate value like one day
+        if (!maxAge) maxAge = 24 * 60 * 60 * 1000;
+        value = JSON.stringify(value);
+        await redis.set(key, value, 'PX', maxAge);
+      },
 
-    // do not use in production
+      async destroy(key) {
+        await redis.del(key);
+      },
+    };
+    /**
+     * redis defineCommand (do not use in production)
+     */
     redis.defineCommand('phgetall', {
       lua: `
       local collate = function (key)
@@ -55,8 +77,6 @@ module.exports = app => {
       return cjson.encode(data)
       `,
     });
-
-    // do not use in production
     redis.defineCommand('pget', {
       lua: `
         local data = {}
