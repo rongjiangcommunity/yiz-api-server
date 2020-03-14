@@ -1,4 +1,4 @@
-FROM node:carbon
+FROM node:latest
 
 ENV HOME="/home/admin"
 
