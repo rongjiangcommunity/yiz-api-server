@@ -13,15 +13,27 @@ module.exports = app => {
   const prereview = app.middleware.prereview();
 
   const {router, controller: c} = app;
-  router.get('/', c.home.index);
-  // for local test
-  // router.get('/api/uid', c.home.uid);
 
+  // 1. ws demo
+  // app.io.of('/ws')
+  app.io.of('/ws').route('chat', app.io.controller.chat.index);
+  // app.io.of('/ws/chat')
+  app.io.of('/ws/chat').route('chat', app.io.controller.chat.index);
+
+  // 2. geo
+  router.post('/api/geo/:sid', isWxLogin, c.geo.save);
+  router.get('/api/geo/nearby/:sid', isWxLogin, c.geo.nearby);
+
+  // 3. wechat
   router.post('/api/wechat/redeem', c.wechat.redeem);
   router.post('/api/wechat/expire', c.wechat.expire);
   router.post('/api/wechat/decrypt/:sid', isWxLogin, c.wechat.decrypt);
   // TODO: @deprecated
   router.post('/api/wechat/:sid/decrypt', isWxLogin, c.wechat.decrypt);
+
+  router.get('/', c.home.index);
+  // for local test
+  // router.get('/api/uid', c.home.uid);
 
   router.get('/api/user/:sid', isWxLogin, c.user.info);
   router.post('/api/user/:sid', isWxLogin, c.user.update);
@@ -65,9 +77,6 @@ module.exports = app => {
   router.get('/api/lawyer/has_unread/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.hasUnread);
   router.get('/api/lawyer/user_has_unread/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.userHasUnread);
   router.get('/api/lawyer/lawyer_has_unread/:sid', isWxLogin, checkRole(XIAOYOU), c.lawyer.lawyerHasUnread);
-
-  router.post('/api/geo/:sid', isWxLogin, c.geo.save);
-  router.get('/api/geo/nearby/:sid', isWxLogin, c.geo.nearby);
 
   // router.get('/api/lawyer/stat/:sid', c.lawyer.stat);
 

@@ -57,5 +57,18 @@ module.exports = appInfo => {
   };
   config.authtoken = '';
   config.proxy = true;
+  config.io = {
+    init: {}, // passed to engine.io
+    namespace: {
+      '/ws': {
+        connectionMiddleware: ['auth'],
+        packetMiddleware: ['filter'],
+      },
+      '/ws/chat': {
+        connectionMiddleware: ['auth'],
+        packetMiddleware: [],
+      },
+    },
+  };
   return config;
 };
